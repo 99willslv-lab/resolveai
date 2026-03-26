@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    
+    <!-- PWA Metadata -->
+    <meta name="theme-color" content="#0ea5e9">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Procuro Alguém">
+    
+    <!-- SEO -->
+    <meta name="description" content="Encontre profissionais de confiança perto de você. Procuro Alguém é o marketplace de serviços locais mais rápido e fácil de usar.">
+    <meta name="keywords" content="serviços locais, profissionais, marketplace, procuro alguém">
+    <meta name="author" content="Procuro Alguém">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Procuro Alguém - Serviços Locais">
+    <meta property="og:description" content="Encontre profissionais de confiança perto de você">
+    <meta property="og:url" content="https://procuro-alguem.com">
+    <meta property="og:image" content="https://procuro-alguem.com/og-image.png">
+    <meta property="og:site_name" content="Procuro Alguém">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Procuro Alguém - Serviços Locais">
+    <meta property="twitter:description" content="Encontre profissionais de confiança perto de você">
+    <meta property="twitter:image" content="https://procuro-alguem.com/og-image.png">
+    
+    <!-- Icons -->
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-192x192.png">
+    <link rel="icon" type="image/png" href="/icon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="/icon-512x512.png" sizes="512x512">
+    <link rel="shortcut icon" href="/favicon.ico">
+    
+    <!-- Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://api.seu-dominio.com">
+    
+    <!-- CSS -->
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      html, body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background: #0f172a;
+        color: #f0f9ff;
+      }
+      
+      #root {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      /* Loading spinner (antes do JS carregar) */
+      .loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 100%);
+      }
+      
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(59,130,246,0.1);
+        border-top: 4px solid #0ea5e9;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      /* Support no-js fallback */
+      noscript {
+        display: block;
+        text-align: center;
+        padding: 20px;
+        background: rgba(239,68,68,0.1);
+        color: #fca5a5;
+        border-radius: 8px;
+      }
+    </style>
+    
+    <title>Procuro Alguém - Serviços Locais</title>
+  </head>
+  <body>
+    <div id="root">
+      <div class="loading">
+        <div class="spinner"></div>
+      </div>
+    </div>
+    
+    <noscript>
+      <strong>Este site requer JavaScript para funcionar.</strong>
+      <p>Por favor, habilite JavaScript em seu navegador.</p>
+    </noscript>
+    
+    <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then(reg => console.log('✅ SW registered'))
+            .catch(err => console.log('❌ SW registration failed:', err))
+        })
+      }
+      
+      // PWA Install Prompt
+      let deferredPrompt
+      
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault()
+        deferredPrompt = e
+        // Mostrar botão de install
+        console.log('PWA can be installed')
+      })
+      
+      window.addEventListener('appinstalled', () => {
+        console.log('✅ PWA installed')
+        deferredPrompt = null
+      })
+    </script>
+  </body>
+</html>
