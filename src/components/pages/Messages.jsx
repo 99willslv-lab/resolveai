@@ -1,103 +1,36 @@
-import { useState } from 'react'
-
-export default function Messages() {
-  const [conversations, setConversations] = useState([
-    { id: 1, name: 'João Silva', lastMessage: 'Olá! Preciso de um encanador...', time: '5 min', unread: 2 },
-    { id: 2, name: 'Maria Oliveira', lastMessage: 'Qual é seu disponibilidade?', time: '30 min', unread: 0 },
-    { id: 3, name: 'Carlos Pereira', lastMessage: 'Obrigado pelo serviço!', time: '2h', unread: 0 }
-  ])
-  
-  const [selectedChat, setSelectedChat] = useState(conversations[0])
-  const [message, setMessage] = useState('')
-
-  const handleSend = () => {
-    if (message.trim()) {
-      setMessage('')
+// MENSAGENS
+export const getMessages = async (professionalId = null) => {
+  try {
+    let query = supabase
+      .from('messages')
+      .select('*')
+      .order('created_at', { ascending: false })
+    
+    if (professionalId) {
+      query = query.eq('professional_id', professionalId)
     }
+    
+    const { data, error } = await query
+    
+    if (error) throw error
+    return data || []
+  } catch (error) {
+    console.error('Erro:', error)
+    return []
   }
+}
 
-  return (
+export const createMessage = async (messageData) => {
+  try {
+    const { data, error } = await supabase
+      .from('messages')
+      .insert([messageData])
+      .select()
     
-
-      {/* Sidebar */}
-      
-
-        
-
-          
-        
-
-
-        
-
-          {conversations.map(conv => (
-            
-
-          ))}
-        
-
-      
-
-
-      {/* Chat */}
-      
-
-        {/* Header */}
-        
-
-          
-
-            {selectedChat.name}
-          
-
-          
-            💬 WhatsApp
-          
-        
-
-
-        {/* Messages */}
-        
-
-          
-
-            Olá! Preciso de um encanador urgente
-          
-
-          
-
-            Oi! Posso ir em 2 horas
-          
-
-          
-
-            Perfeito! Qual é o endereço?
-          
-
-        
-
-
-        {/* Input */}
-        
-
-           setMessage(e.target.value)}
-            placeholder="Escreva sua mensagem..."
-            style={{
-              flex: 1,
-              padding: '12px',
-              border: '2px solid #e5e7eb',
-              borderRadius: '8px',
-              fontSize: '13px',
-              outline: 'none'
-            }}
-          />
-          
-
-        
-
-      
-
-    
-
-  )
+    if (error) throw error
+    return data[0]
+  } catch (error) {
+    console.error('Erro:', error)
+    return null
+  }
 }
