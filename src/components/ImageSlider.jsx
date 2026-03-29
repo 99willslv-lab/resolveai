@@ -85,9 +85,6 @@ export default function ImageSlider({ images, autoPlay = true }) {
           borderRadius: '50%',
           cursor: 'pointer',
           fontSize: '18px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
           zIndex: 10
         }}
       >
@@ -109,9 +106,6 @@ export default function ImageSlider({ images, autoPlay = true }) {
           borderRadius: '50%',
           cursor: 'pointer',
           fontSize: '18px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
           zIndex: 10
         }}
       >
