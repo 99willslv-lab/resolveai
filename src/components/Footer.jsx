@@ -35,52 +35,8 @@ export default function Footer() {
             color: '#9ca3af',
             marginBottom: '24px'
           }}>
-            Conectando clientes a profissionais de confiança. Problemas resolvidos. Rápido.
+            Conectando clientes a profissionais. Problemas resolvidos. Rápido.
           </p>
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <a href="#" style={{
-              width: '40px',
-              height: '40px',
-              background: 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '10px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#16a34a',
-              textDecoration: 'none',
-              fontSize: '18px'
-            }}>
-              f
-            </a>
-            <a href="#" style={{
-              width: '40px',
-              height: '40px',
-              background: 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '10px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#16a34a',
-              textDecoration: 'none',
-              fontSize: '18px'
-            }}>
-              📷
-            </a>
-            <a href="#" style={{
-              width: '40px',
-              height: '40px',
-              background: 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '10px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#16a34a',
-              textDecoration: 'none',
-              fontSize: '18px'
-            }}>
-              💬
-            </a>
-          </div>
         </div>
 
         <div>
@@ -93,51 +49,28 @@ export default function Footer() {
             Para Clientes
           </h4>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-            {['Buscar Profissionais', 'Como Funciona', 'FAQ', 'Contato'].map((item, idx) => (
-              <li key={idx} style={{ marginBottom: '12px' }}>
-                <button
-                  onClick={() => navigate('/')}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#9ca3af',
-                    fontSize: '14px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  ➤ {item}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h4 style={{
-            fontSize: '16px',
-            fontWeight: '800',
-            marginBottom: '20px',
-            color: 'white'
-          }}>
-            Para Profissionais
-          </h4>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-            {['Cadastrar-se', 'Como Ganhar Mais', 'Suporte', 'Políticas'].map((item, idx) => (
-              <li key={idx} style={{ marginBottom: '12px' }}>
-                <button
-                  onClick={() => navigate('/professional-form')}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#9ca3af',
-                    fontSize: '14px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  ➤ {item}
-                </button>
-              </li>
-            ))}
+            <li style={{ marginBottom: '12px' }}>
+              <button onClick={() => navigate('/')} style={{
+                background: 'none',
+                border: 'none',
+                color: '#9ca3af',
+                fontSize: '14px',
+                cursor: 'pointer'
+              }}>
+                ➤ Buscar Profissionais
+              </button>
+            </li>
+            <li style={{ marginBottom: '12px' }}>
+              <button onClick={() => navigate('/')} style={{
+                background: 'none',
+                border: 'none',
+                color: '#9ca3af',
+                fontSize: '14px',
+                cursor: 'pointer'
+              }}>
+                ➤ Como Funciona
+              </button>
+            </li>
           </ul>
         </div>
 
@@ -150,45 +83,24 @@ export default function Footer() {
           }}>
             Contato
           </h4>
-          <div style={{ fontSize: '14px', lineHeight: '1.8' }}>
-            <p style={{ margin: '0 0 8px 0', color: '#9ca3af' }}>
-              📧 contato@resolveai.com
-            </p>
-            <p style={{ margin: '0 0 8px 0', color: '#9ca3af' }}>
-              📱 (11) 98765-4321
-            </p>
-            <p style={{ margin: '0 0 8px 0', color: '#9ca3af' }}>
-              📍 Castro, Carambeí, Tibagi - PR
-            </p>
-          </div>
+          <p style={{ fontSize: '14px', color: '#9ca3af', margin: '0 0 8px 0' }}>
+            📧 contato@resolveai.com
+          </p>
+          <p style={{ fontSize: '14px', color: '#9ca3af', margin: 0 }}>
+            📱 (11) 98765-4321
+          </p>
         </div>
       </div>
 
       <div style={{
         borderTop: '1px solid #374151',
         paddingTop: '24px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        gap: '16px',
         fontSize: '12px',
         color: '#6b7280'
       }}>
         <p style={{ margin: 0 }}>
-          © 2024 ResolveAi. Todos os direitos reservados.
+          © 2024 ResolveAi
         </p>
-        <div style={{ display: 'flex', gap: '24px' }}>
-          <a href="#" style={{ color: '#6b7280', textDecoration: 'none' }}>
-            Termos de Serviço
-          </a>
-          <a href="#" style={{ color: '#6b7280', textDecoration: 'none' }}>
-            Privacidade
-          </a>
-          <a href="#" style={{ color: '#6b7280', textDecoration: 'none' }}>
-            Cookies
-          </a>
-        </div>
       </div>
     </footer>
   )
