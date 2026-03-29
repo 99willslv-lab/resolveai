@@ -26,56 +26,82 @@ export default function ProfessionalForm() {
   }
 
   return (
-    
-
-      
-
-        
-
+    <div style={{
+      background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+      minHeight: '100vh',
+      padding: '40px 16px'
+    }}>
+      <div style={{
+        maxWidth: '600px',
+        margin: '0 auto'
+      }}>
+        <h1 style={{
+          fontSize: '32px',
+          fontWeight: '900',
+          color: 'white',
+          textAlign: 'center',
+          marginBottom: '12px'
+        }}>
           🚀 Anuncie seu Serviço
-        
-
-        
-
-
+        </h1>
+        <p style={{
+          fontSize: '16px',
+          color: 'rgba(255, 255, 255, 0.9)',
+          textAlign: 'center',
+          marginBottom: '32px'
+        }}>
           Preencha os dados para ser anunciado na plataforma
-        
-
+        </p>
 
         {submitted && (
-          
-
+          <div style={{
+            background: '#dcfce7',
+            color: '#16a34a',
+            padding: '16px',
+            borderRadius: '12px',
+            marginBottom: '24px',
+            fontWeight: '700',
+            textAlign: 'center'
+          }}>
             ✅ Solicitação enviada com sucesso!
-          
-
+          </div>
         )}
 
-        
-
-          {/* Progress */}
-          
-
+        <form onSubmit={handleSubmit} style={{
+          background: 'white',
+          padding: '32px',
+          borderRadius: '16px',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)'
+        }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: '12px',
+            marginBottom: '32px'
+          }}>
             {[1, 2, 3, 4].map(s => (
-              
-
+              <div key={s} style={{
+                height: '6px',
+                background: s <= step ? '#16a34a' : '#e5e7eb',
+                borderRadius: '3px',
+                transition: 'all 0.3s'
+              }} />
             ))}
-          
-
+          </div>
 
           {step === 1 && (
-            
-
-              
-
+            <div>
+              <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '20px', color: '#16a34a' }}>
                 📋 Dados Básicos
-              
-
-              
-
-                
+              </h2>
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ fontSize: '13px', fontWeight: '700', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
                   Nome Completo *
-                
-                 handleInputChange('name', e.target.value)}
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
                   placeholder="Seu nome"
                   style={{
                     width: '100%',
@@ -87,15 +113,16 @@ export default function ProfessionalForm() {
                     boxSizing: 'border-box'
                   }}
                 />
-              
+              </div>
 
-
-              
-
-                
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ fontSize: '13px', fontWeight: '700', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
                   Email *
-                
-                 handleInputChange('email', e.target.value)}
+                </label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
                   placeholder="seu@email.com"
                   style={{
                     width: '100%',
@@ -107,15 +134,16 @@ export default function ProfessionalForm() {
                     boxSizing: 'border-box'
                   }}
                 />
-              
+              </div>
 
-
-              
-
-                
+              <div>
+                <label style={{ fontSize: '13px', fontWeight: '700', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
                   Telefone/WhatsApp *
-                
-                 handleInputChange('phone', e.target.value)}
+                </label>
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
                   placeholder="(11) 98765-4321"
                   style={{
                     width: '100%',
@@ -127,36 +155,49 @@ export default function ProfessionalForm() {
                     boxSizing: 'border-box'
                   }}
                 />
-              
-
-            
-
+              </div>
+            </div>
           )}
 
           {step === 2 && (
-            
-
-              
-
+            <div>
+              <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '20px', color: '#16a34a' }}>
                 🔧 Profissão
-              
-
-              
-
-                
+              </h2>
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ fontSize: '13px', fontWeight: '700', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
                   Profissão *
-                
-                
+                </label>
+                <select
+                  value={formData.profession}
+                  onChange={(e) => handleInputChange('profession', e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    border: '2px solid #e5e7eb',
+                    borderRadius: '10px',
+                    fontSize: '13px',
+                    outline: 'none',
+                    boxSizing: 'border-box'
+                  }}
+                >
+                  <option>Selecione uma profissão</option>
+                  <option>Encanador</option>
+                  <option>Eletricista</option>
+                  <option>Limpeza</option>
+                  <option>Pintura</option>
+                  <option>Carpinteiro</option>
+                </select>
+              </div>
 
-              
-
-
-              
-
-                
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ fontSize: '13px', fontWeight: '700', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
                   Anos de Experiência *
-                
-                 handleInputChange('experience', e.target.value)}
+                </label>
+                <input
+                  type="number"
+                  value={formData.experience}
+                  onChange={(e) => handleInputChange('experience', e.target.value)}
                   placeholder="Ex: 10"
                   style={{
                     width: '100%',
@@ -168,15 +209,15 @@ export default function ProfessionalForm() {
                     boxSizing: 'border-box'
                   }}
                 />
-              
+              </div>
 
-
-              
-
-                
+              <div>
+                <label style={{ fontSize: '13px', fontWeight: '700', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
                   Descrição *
-                
-                 handleInputChange('bio', e.target.value)}
+                </label>
+                <textarea
+                  value={formData.bio}
+                  onChange={(e) => handleInputChange('bio', e.target.value)}
                   placeholder="Descreva sua experiência..."
                   style={{
                     width: '100%',
@@ -272,7 +313,6 @@ export default function ProfessionalForm() {
             </div>
           )}
 
-          {/* Botões */}
           <div style={{ display: 'flex', gap: '12px', marginTop: '32px' }}>
             {step > 1 && (
               <button
@@ -332,42 +372,4 @@ export default function ProfessionalForm() {
       </div>
     </div>
   )
-}</code>
-            <button class="copy-btn" onclick="copyToClipboard('code7', this)">📋 Copiar</button>
-        </div>
-
-        <div style={{
-          background: '#dcfce7',
-          padding: '40px 20px',
-          borderRadius: '12px',
-          textAlign: 'center',
-          marginTop: '40px'
-        }}>
-            <h2 style={{ color: '#16a34a', fontSize: '24px', fontWeight: '900', margin: '0 0 8px 0' }}>
-              ✅ Pronto!
-            </h2>
-            <p style={{ color: '#374151', margin: 0 }}>
-              Copie as 7 páginas acima e cole no seu projeto em src/pages/
-            </p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    function copyToClipboard(elementId, button) {
-      const code = document.getElementById(elementId).textContent;
-      navigator.clipboard.writeText(code).then(() => {
-        button.textContent = '✅ Copiado!';
-        button.classList.add('copied');
-        setTimeout(() => {
-          button.textContent = '📋 Copiar';
-          button.classList.remove('copied');
-        }, 2000);
-      }).catch(err => {
-        alert('Erro ao copiar: ' + err);
-      });
-    }
-  </script>
-</body>
-</html>
+}
