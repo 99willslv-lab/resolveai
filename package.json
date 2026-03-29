@@ -1,72 +1,27 @@
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#16a34a">
-    <meta name="description" content="ResolveAi - Encontre profissionais de confiança perto de você">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="ResolveAi">
-    
-    <!-- Links -->
-    <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%2316a34a' width='192' height='192'/><text x='50%' y='50%' font-size='80' fill='white' text-anchor='middle' dominant-baseline='central' font-weight='bold'>RA</text></svg>">
-    
-    <!-- Open Graph -->
-    <meta property="og:title" content="ResolveAi - Marketplace de Serviços">
-    <meta property="og:description" content="Encontre profissionais de confiança perto de você">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://resolveai.com">
-    
-    <title>ResolveAi - Problemas resolvidos. Rápido.</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-    
-    <!-- Service Worker Registration -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/service-worker.js', {
-            scope: '/'
-          })
-            .then((registration) => {
-              console.log('✅ Service Worker registrado:', registration)
-              
-              setInterval(() => {
-                registration.update()
-              }, 60 * 60 * 1000)
-            })
-            .catch((error) => {
-              console.error('❌ Erro ao registrar Service Worker:', error)
-            })
-        })
-
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          console.log('Service Worker atualizado')
-        })
-      }
-    </script>
-
-    <!-- Web App Install Prompt -->
-    <script>
-      let deferredPrompt
-
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault()
-        deferredPrompt = e
-        console.log('App pode ser instalado')
-      })
-
-      window.addEventListener('appinstalled', () => {
-        console.log('✅ App instalado com sucesso!')
-        deferredPrompt = null
-      })
-    </script>
-  </body>
-</html>
+{
+  "name": "resolveai",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.0",
+    "@supabase/supabase-js": "^2.38.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.55.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "vite": "^5.0.8"
+  }
+}
