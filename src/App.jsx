@@ -1,4 +1,4 @@
-1import { useState } from 'react'
+import { useState } from 'react'
 import Hero from './components/Hero.jsx'
 import Cards from './components/Cards.jsx'
 import MensagemModal from './components/MensagemModal.jsx'
