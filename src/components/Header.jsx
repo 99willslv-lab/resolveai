@@ -1,95 +1,64 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 export default function Header() {
-  const navigate = useNavigate()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
-  return (
-    <header style={{
-      background: 'white',
-      borderBottom: '1px solid #e5e7eb',
+  const styles = {
+    header: {
+      backgroundColor: '#16a34a',
+      color: 'white',
+      padding: '20px',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
       position: 'sticky',
       top: 0,
-      zIndex: 100,
-      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-    }}>
-      <div style={{
-        maxWidth: '1400px',
-        margin: '0 auto',
-        padding: '16px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between'
-      }}>
-        <button
-          onClick={() => navigate('/')}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '24px',
-            fontWeight: '900',
-            color: '#16a34a'
-          }}
-        >
-          🚀 ResolveAi
-        </button>
+      zIndex: 100
+    },
+    container: {
+      maxWidth: '1200px',
+      margin: '0 auto',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    },
+    logo: {
+      fontSize: '24px',
+      fontWeight: 'bold',
+      textDecoration: 'none',
+      color: 'white'
+    },
+    nav: {
+      display: 'flex',
+      gap: '20px',
+      alignItems: 'center'
+    },
+    link: {
+      color: 'white',
+      textDecoration: 'none',
+      fontSize: '14px',
+      transition: 'opacity 0.2s'
+    },
+    button: {
+      backgroundColor: '#f97316',
+      color: 'white',
+      border: 'none',
+      padding: '8px 16px',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      fontSize: '14px',
+      textDecoration: 'none'
+    }
+  }
 
-        <nav style={{
-          display: 'flex',
-          gap: '24px',
-          alignItems: 'center',
-          flex: 1,
-          marginLeft: '40px'
-        }}>
-          <button onClick={() => navigate('/')} style={{
-            background: 'none',
-            border: 'none',
-            color: '#111827',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'pointer'
-          }}>
-            🏠 Início
-          </button>
-          <button onClick={() => navigate('/messages')} style={{
-            background: 'none',
-            border: 'none',
-            color: '#111827',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'pointer'
-          }}>
-            💬 Mensagens
-          </button>
-          <button onClick={() => navigate('/professional-form')} style={{
-            background: 'none',
-            border: 'none',
-            color: '#111827',
-            fontSize: '14px',
-            fontWeight: '600',
-            cursor: 'pointer'
-          }}>
-            📝 Cadastro
-          </button>
+  return (
+    <header style={styles.header}>
+      <div style={styles.container}>
+        <Link to="/" style={styles.logo}>
+          🔧 ResolveAi
+        </Link>
+        <nav style={styles.nav}>
+          <Link to="/" style={styles.link}>Início</Link>
+          <Link to="/messages" style={styles.link}>Mensagens</Link>
+          <Link to="/professional-form" style={styles.link}>Cadastrar</Link>
+          <Link to="/admin/login" style={styles.button}>Admin</Link>
         </nav>
-
-        <button
-          onClick={() => navigate('/admin/login')}
-          style={{
-            padding: '8px 16px',
-            background: '#16a34a',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '12px',
-            fontWeight: '700',
-            cursor: 'pointer'
-          }}
-        >
-          🔐 Admin
-        </button>
       </div>
     </header>
   )
