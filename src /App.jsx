@@ -15,7 +15,7 @@ export default function App() {
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Header />
         
-        <main style={{ flex: 1, padding: '20px' }}>
+        <main style={{ flex: 1, padding: '20px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/messages" element={<Messages />} />
