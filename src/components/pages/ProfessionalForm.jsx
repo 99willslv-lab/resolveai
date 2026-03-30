@@ -2,374 +2,370 @@ import { useState } from 'react'
 
 export default function ProfessionalForm() {
   const [step, setStep] = useState(1)
-  const [submitted, setSubmitted] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
-    phone: '',
     profession: '',
-    city: 'Castro',
-    experience: '',
-    bio: '',
-    price: '',
-    whatsapp: ''
+    city: '',
+    neighborhood: '',
+    phone: '',
+    email: '',
+    whatsapp: '',
+    instagram: '',
+    description: '',
+    pricePerHour: '',
+    priceMinimum: '',
+    specialties: '',
+    availabilityDays: ''
   })
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleNext = () => {
+    if (step < 4) setStep(step + 1)
+  }
+
+  const handlePrev = () => {
+    if (step > 1) setStep(step - 1)
   }
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    setSubmitted(true)
-    setTimeout(() => setSubmitted(false), 3000)
+    console.log('Formulário enviado:', formData)
+    alert('Profissional cadastrado com sucesso!')
+    setStep(1)
+    setFormData({
+      name: '',
+      profession: '',
+      city: '',
+      neighborhood: '',
+      phone: '',
+      email: '',
+      whatsapp: '',
+      instagram: '',
+      description: '',
+      pricePerHour: '',
+      priceMinimum: '',
+      specialties: '',
+      availabilityDays: ''
+    })
+  }
+
+  const styles = {
+    container: {
+      maxWidth: '600px',
+      margin: '50px auto',
+      padding: '30px',
+      backgroundColor: 'white',
+      borderRadius: '8px',
+      boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+    },
+    title: {
+      fontSize: '24px',
+      fontWeight: 'bold',
+      marginBottom: '10px'
+    },
+    progressBar: {
+      marginBottom: '30px'
+    },
+    progress: {
+      height: '4px',
+      backgroundColor: '#e5e7eb',
+      borderRadius: '2px',
+      overflow: 'hidden'
+    },
+    progressFill: {
+      height: '100%',
+      backgroundColor: '#16a34a',
+      width: `${(step / 4) * 100}%`,
+      transition: 'width 0.3s'
+    },
+    form: {
+      display: 'flex',
+      flexDirection: 'column'
+    },
+    group: {
+      marginBottom: '15px'
+    },
+    label: {
+      fontSize: '14px',
+      fontWeight: 'bold',
+      marginBottom: '5px',
+      display: 'block'
+    },
+    input: {
+      width: '100%',
+      padding: '10px',
+      borderRadius: '4px',
+      border: '1px solid #d1d5db',
+      fontSize: '14px',
+      boxSizing: 'border-box'
+    },
+    textarea: {
+      width: '100%',
+      padding: '10px',
+      borderRadius: '4px',
+      border: '1px solid #d1d5db',
+      fontSize: '14px',
+      boxSizing: 'border-box',
+      minHeight: '100px',
+      fontFamily: 'inherit'
+    },
+    buttons: {
+      display: 'flex',
+      gap: '10px',
+      marginTop: '30px'
+    },
+    button: {
+      border: 'none',
+      padding: '10px 20px',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      fontSize: '14px',
+      fontWeight: 'bold',
+      flex: 1
+    },
+    prevButton: {
+      backgroundColor: '#d1d5db',
+      color: '#1f2937'
+    },
+    nextButton: {
+      backgroundColor: '#16a34a',
+      color: 'white'
+    },
+    submitButton: {
+      backgroundColor: '#16a34a',
+      color: 'white'
+    }
   }
 
   return (
-    <div style={{
-      background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
-      minHeight: '100vh',
-      padding: '40px 16px'
-    }}>
-      <div style={{
-        maxWidth: '600px',
-        margin: '0 auto'
-      }}>
-        <h1 style={{
-          fontSize: '32px',
-          fontWeight: '900',
-          color: 'white',
-          textAlign: 'center',
-          marginBottom: '12px'
-        }}>
-          🚀 Anuncie seu Serviço
-        </h1>
-        <p style={{
-          fontSize: '16px',
-          color: 'rgba(255, 255, 255, 0.9)',
-          textAlign: 'center',
-          marginBottom: '32px'
-        }}>
-          Preencha os dados para ser anunciado na plataforma
-        </p>
+    <div style={styles.container}>
+      <h1 style={styles.title}>Cadastrar Serviço Profissional</h1>
+      <p style={{ color: '#6b7280', marginBottom: '20px' }}>Passo {step} de 4</p>
 
-        {submitted && (
-          <div style={{
-            background: '#dcfce7',
-            color: '#16a34a',
-            padding: '16px',
-            borderRadius: '12px',
-            marginBottom: '24px',
-            fontWeight: '700',
-            textAlign: 'center'
-          }}>
-            ✅ Solicitação enviada com sucesso!
-          </div>
+      <div style={styles.progressBar}>
+        <div style={styles.progress}>
+          <div style={styles.progressFill}></div>
+        </div>
+      </div>
+
+      <form style={styles.form} onSubmit={handleSubmit}>
+        {/* PASSO 1: Informações Básicas */}
+        {step === 1 && (
+          <>
+            <div style={styles.group}>
+              <label style={styles.label}>Nome Completo</label>
+              <input
+                type="text"
+                name="name"
+                style={styles.input}
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Seu nome"
+                required
+              />
+            </div>
+
+            <div style={styles.group}>
+              <label style={styles.label}>Profissão</label>
+              <input
+                type="text"
+                name="profession"
+                style={styles.input}
+                value={formData.profession}
+                onChange={handleChange}
+                placeholder="Ex: Encanador, Eletricista"
+                required
+              />
+            </div>
+
+            <div style={styles.group}>
+              <label style={styles.label}>Descrição</label>
+              <textarea
+                name="description"
+                style={styles.textarea}
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Descreva sua experiência e serviços"
+              />
+            </div>
+          </>
         )}
 
-        <form onSubmit={handleSubmit} style={{
-          background: 'white',
-          padding: '32px',
-          borderRadius: '16px',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)'
-        }}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '12px',
-            marginBottom: '32px'
-          }}>
-            {[1, 2, 3, 4].map(s => (
-              <div key={s} style={{
-                height: '6px',
-                background: s <= step ? '#16a34a' : '#e5e7eb',
-                borderRadius: '3px',
-                transition: 'all 0.3s'
-              }} />
-            ))}
-          </div>
-
-          {step === 1 && (
-            <div>
-              <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '20px', color: '#16a34a' }}>
-                📋 Dados Básicos
-              </h2>
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ fontSize: '13px', fontWeight: '700', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
-                  Nome Completo *
-                </label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
-                  placeholder="Seu nome"
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '10px',
-                    fontSize: '13px',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ fontSize: '13px', fontWeight: '700', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  placeholder="seu@email.com"
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '10px',
-                    fontSize: '13px',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-
-              <div>
-                <label style={{ fontSize: '13px', fontWeight: '700', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
-                  Telefone/WhatsApp *
-                </label>
-                <input
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => handleInputChange('phone', e.target.value)}
-                  placeholder="(11) 98765-4321"
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '10px',
-                    fontSize: '13px',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div>
-              <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '20px', color: '#16a34a' }}>
-                🔧 Profissão
-              </h2>
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ fontSize: '13px', fontWeight: '700', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
-                  Profissão *
-                </label>
-                <select
-                  value={formData.profession}
-                  onChange={(e) => handleInputChange('profession', e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '10px',
-                    fontSize: '13px',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                  }}
-                >
-                  <option>Selecione uma profissão</option>
-                  <option>Encanador</option>
-                  <option>Eletricista</option>
-                  <option>Limpeza</option>
-                  <option>Pintura</option>
-                  <option>Carpinteiro</option>
-                </select>
-              </div>
-
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ fontSize: '13px', fontWeight: '700', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
-                  Anos de Experiência *
-                </label>
-                <input
-                  type="number"
-                  value={formData.experience}
-                  onChange={(e) => handleInputChange('experience', e.target.value)}
-                  placeholder="Ex: 10"
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '10px',
-                    fontSize: '13px',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-
-              <div>
-                <label style={{ fontSize: '13px', fontWeight: '700', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
-                  Descrição *
-                </label>
-                <textarea
-                  value={formData.bio}
-                  onChange={(e) => handleInputChange('bio', e.target.value)}
-                  placeholder="Descreva sua experiência..."
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '10px',
-                    fontSize: '13px',
-                    minHeight: '100px',
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                    fontFamily: 'inherit'
-                  }}
-                />
-              </div>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div>
-              <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '20px', color: '#16a34a' }}>
-                📍 Localização
-              </h2>
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ fontSize: '13px', fontWeight: '700', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
-                  Cidade *
-                </label>
-                <select
-                  value={formData.city}
-                  onChange={(e) => handleInputChange('city', e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '10px',
-                    fontSize: '13px',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                  }}
-                >
-                  <option>Castro</option>
-                  <option>Carambeí</option>
-                  <option>Tibagi</option>
-                </select>
-              </div>
-
-              <div>
-                <label style={{ fontSize: '13px', fontWeight: '700', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
-                  Preço/Hora *
-                </label>
-                <input
-                  type="number"
-                  value={formData.price}
-                  onChange={(e) => handleInputChange('price', e.target.value)}
-                  placeholder="Ex: 80"
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '10px',
-                    fontSize: '13px',
-                    outline: 'none',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-            </div>
-          )}
-
-          {step === 4 && (
-            <div>
-              <h2 style={{ fontSize: '18px', fontWeight: '800', marginBottom: '20px', color: '#16a34a' }}>
-                ✅ Confirmar
-              </h2>
-              <div style={{
-                background: '#f9fafb',
-                padding: '16px',
-                borderRadius: '10px',
-                marginBottom: '16px',
-                fontSize: '13px'
-              }}>
-                <p><strong>Nome:</strong> {formData.name}</p>
-                <p><strong>Profissão:</strong> {formData.profession}</p>
-                <p><strong>Cidade:</strong> {formData.city}</p>
-                <p><strong>Preço/Hora:</strong> R$ {formData.price}</p>
-              </div>
-
-              <label style={{ display: 'flex', gap: '8px', cursor: 'pointer', marginBottom: '16px' }}>
-                <input type="checkbox" required />
-                <span style={{ fontSize: '12px', color: '#6b7280' }}>
-                  Concordo com os Termos de Serviço
-                </span>
-              </label>
-            </div>
-          )}
-
-          <div style={{ display: 'flex', gap: '12px', marginTop: '32px' }}>
-            {step > 1 && (
-              <button
-                type="button"
-                onClick={() => setStep(step - 1)}
-                style={{
-                  flex: 1,
-                  padding: '12px',
-                  background: '#f3f4f6',
-                  color: '#111827',
-                  border: 'none',
-                  borderRadius: '10px',
-                  fontWeight: '700',
-                  cursor: 'pointer'
-                }}
+        {/* PASSO 2: Localização */}
+        {step === 2 && (
+          <>
+            <div style={styles.group}>
+              <label style={styles.label}>Cidade</label>
+              <select
+                name="city"
+                style={styles.input}
+                value={formData.city}
+                onChange={handleChange}
+                required
               >
-                Voltar
-              </button>
-            )}
+                <option value="">Selecione uma cidade</option>
+                <option value="Castro">Castro</option>
+                <option value="Carambeí">Carambeí</option>
+                <option value="Tibagi">Tibagi</option>
+              </select>
+            </div>
 
-            {step < 4 ? (
-              <button
-                type="button"
-                onClick={() => setStep(step + 1)}
-                style={{
-                  flex: 1,
-                  padding: '12px',
-                  background: '#16a34a',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '10px',
-                  fontWeight: '700',
-                  cursor: 'pointer'
-                }}
-              >
-                Próximo
-              </button>
-            ) : (
-              <button
-                type="submit"
-                style={{
-                  flex: 1,
-                  padding: '12px',
-                  background: 'linear-gradient(135deg, #16a34a, #15803d)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '10px',
-                  fontWeight: '700',
-                  cursor: 'pointer'
-                }}
-              >
-                Enviar Solicitação
-              </button>
-            )}
-          </div>
-        </form>
-      </div>
+            <div style={styles.group}>
+              <label style={styles.label}>Bairro</label>
+              <input
+                type="text"
+                name="neighborhood"
+                style={styles.input}
+                value={formData.neighborhood}
+                onChange={handleChange}
+                placeholder="Seu bairro"
+              />
+            </div>
+
+            <div style={styles.group}>
+              <label style={styles.label}>Especialidades</label>
+              <input
+                type="text"
+                name="specialties"
+                style={styles.input}
+                value={formData.specialties}
+                onChange={handleChange}
+                placeholder="Separar por vírgula"
+              />
+            </div>
+          </>
+        )}
+
+        {/* PASSO 3: Preços */}
+        {step === 3 && (
+          <>
+            <div style={styles.group}>
+              <label style={styles.label}>Preço por Hora (R$)</label>
+              <input
+                type="number"
+                name="pricePerHour"
+                style={styles.input}
+                value={formData.pricePerHour}
+                onChange={handleChange}
+                placeholder="0.00"
+              />
+            </div>
+
+            <div style={styles.group}>
+              <label style={styles.label}>Preço Mínimo (R$)</label>
+              <input
+                type="number"
+                name="priceMinimum"
+                style={styles.input}
+                value={formData.priceMinimum}
+                onChange={handleChange}
+                placeholder="0.00"
+                required
+              />
+            </div>
+
+            <div style={styles.group}>
+              <label style={styles.label}>Dias Disponíveis</label>
+              <input
+                type="text"
+                name="availabilityDays"
+                style={styles.input}
+                value={formData.availabilityDays}
+                onChange={handleChange}
+                placeholder="Ex: Seg, Ter, Qua, Qui, Sex"
+              />
+            </div>
+          </>
+        )}
+
+        {/* PASSO 4: Contato */}
+        {step === 4 && (
+          <>
+            <div style={styles.group}>
+              <label style={styles.label}>Telefone</label>
+              <input
+                type="tel"
+                name="phone"
+                style={styles.input}
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="(42) 98765-4321"
+                required
+              />
+            </div>
+
+            <div style={styles.group}>
+              <label style={styles.label}>Email</label>
+              <input
+                type="email"
+                name="email"
+                style={styles.input}
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="seu@email.com"
+                required
+              />
+            </div>
+
+            <div style={styles.group}>
+              <label style={styles.label}>WhatsApp</label>
+              <input
+                type="tel"
+                name="whatsapp"
+                style={styles.input}
+                value={formData.whatsapp}
+                onChange={handleChange}
+                placeholder="(42) 98765-4321"
+              />
+            </div>
+
+            <div style={styles.group}>
+              <label style={styles.label}>Instagram</label>
+              <input
+                type="text"
+                name="instagram"
+                style={styles.input}
+                value={formData.instagram}
+                onChange={handleChange}
+                placeholder="@seuinstagram"
+              />
+            </div>
+          </>
+        )}
+
+        <div style={styles.buttons}>
+          {step > 1 && (
+            <button
+              type="button"
+              style={{ ...styles.button, ...styles.prevButton }}
+              onClick={handlePrev}
+            >
+              Anterior
+            </button>
+          )}
+
+          {step < 4 ? (
+            <button
+              type="button"
+              style={{ ...styles.button, ...styles.nextButton }}
+              onClick={handleNext}
+            >
+              Próximo
+            </button>
+          ) : (
+            <button
+              type="submit"
+              style={{ ...styles.button, ...styles.submitButton }}
+            >
+              Enviar Cadastro
+            </button>
+          )}
+        </div>
+      </form>
     </div>
   )
 }
