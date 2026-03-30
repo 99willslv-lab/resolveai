@@ -2,88 +2,161 @@ import { useState } from 'react'
 
 export default function AdminMessages() {
   const [messages, setMessages] = useState([
-    { id: 1, client: 'João Silva', prof: 'Maria Oliveira', message: 'Preciso de um encanador urgente...', status: 'unread', time: '5 min' },
-    { id: 2, client: 'Carlos Pereira', prof: 'João Silva', message: 'Qual é o melhor horário?', status: 'read', time: '30 min' },
-    { id: 3, client: 'Ana Costa', prof: 'Carlos Pereira', message: 'Pode vir hoje?', status: 'unread', time: '2h' }
+    {
+      id: 1,
+      clientName: 'Pedro Santos',
+      profissional: 'João Silva',
+      message: 'Qual é o preço para um reparo hidráulico?',
+      status: 'unread',
+      date: '2024-01-15'
+    },
+    {
+      id: 2,
+      clientName: 'Maria Silva',
+      profissional: 'Maria Oliveira',
+      message: 'Posso agendar uma limpeza para próxima semana?',
+      status: 'read',
+      date: '2024-01-14'
+    }
   ])
 
-  const handleReply = (id) => {
-    alert('Responder à mensagem ' + id)
+  const handleMarkAsRead = (id) => {
+    setMessages(messages.map(msg =>
+      msg.id === id ? { ...msg, status: 'read' } : msg
+    ))
+  }
+
+  const handleDelete = (id) => {
+    setMessages(messages.filter(msg => msg.id !== id))
+  }
+
+  const styles = {
+    container: {
+      maxWidth: '1200px',
+      margin: '0 auto'
+    },
+    title: {
+      fontSize: '28px',
+      fontWeight: 'bold',
+      marginBottom: '30px'
+    },
+    table: {
+      width: '100%',
+      borderCollapse: 'collapse',
+      backgroundColor: 'white',
+      borderRadius: '8px',
+      overflow: 'hidden',
+      boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+    },
+    th: {
+      backgroundColor: '#f3f4f6',
+      padding: '12px',
+      textAlign: 'left',
+      fontWeight: 'bold',
+      fontSize: '14px'
+    },
+    td: {
+      padding: '12px',
+      borderTop: '1px solid #e5e7eb'
+    },
+    unread: {
+      fontWeight: 'bold',
+      backgroundColor: '#eff6ff'
+    },
+    badge: {
+      display: 'inline-block',
+      padding: '4px 8px',
+      borderRadius: '4px',
+      fontSize: '12px',
+      marginRight: '8px'
+    },
+    unreadBadge: {
+      backgroundColor: '#dbeafe',
+      color: '#1e40af'
+    },
+    readBadge: {
+      backgroundColor: '#d1fae5',
+      color: '#065f46'
+    },
+    button: {
+      border: 'none',
+      padding: '6px 12px',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      fontSize: '12px',
+      marginRight: '8px'
+    },
+    markButton: {
+      backgroundColor: '#3b82f6',
+      color: 'white'
+    },
+    deleteButton: {
+      backgroundColor: '#ef4444',
+      color: 'white'
+    }
   }
 
   return (
-    <div style={{ background: '#f9fafb', minHeight: '100vh', padding: '24px' }}>
-      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        <h1 style={{ fontSize: '32px', fontWeight: '800', marginBottom: '32px', color: '#16a34a' }}>
-          💬 Gerenciar Mensagens
-        </h1>
+    <div style={styles.container}>
+      <h1 style={styles.title}>Gerenciar Mensagens</h1>
 
-        <div style={{
-          background: 'white',
-          borderRadius: '16px',
-          overflow: 'hidden',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
-        }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-            <thead>
-              <tr style={{ background: '#f9fafb', borderBottom: '2px solid #e5e7eb' }}>
-                <th style={{ padding: '16px', textAlign: 'left', fontWeight: '700' }}>Cliente</th>
-                <th style={{ padding: '16px', textAlign: 'left', fontWeight: '700' }}>Para</th>
-                <th style={{ padding: '16px', textAlign: 'left', fontWeight: '700' }}>Mensagem</th>
-                <th style={{ padding: '16px', textAlign: 'center', fontWeight: '700' }}>Status</th>
-                <th style={{ padding: '16px', textAlign: 'center', fontWeight: '700' }}>Tempo</th>
-                <th style={{ padding: '16px', textAlign: 'center', fontWeight: '700' }}>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {messages.map(msg => (
-                <tr key={msg.id} style={{
-                  borderBottom: '1px solid #e5e7eb',
-                  background: msg.status === 'unread' ? '#f0fdf4' : 'white'
-                }}>
-                  <td style={{ padding: '16px' }}><strong>{msg.client}</strong></td>
-                  <td style={{ padding: '16px' }}>{msg.prof}</td>
-                  <td style={{ padding: '16px', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {msg.message}
-                  </td>
-                  <td style={{ padding: '16px', textAlign: 'center' }}>
-                    <span style={{
-                      background: msg.status === 'unread' ? '#fef3c7' : '#dcfce7',
-                      color: msg.status === 'unread' ? '#b45309' : '#16a34a',
-                      padding: '4px 8px',
-                      borderRadius: '6px',
-                      fontSize: '11px',
-                      fontWeight: '600'
-                    }}>
-                      {msg.status === 'unread' ? '🔴 Não lida' : '✓ Lida'}
-                    </span>
-                  </td>
-                  <td style={{ padding: '16px', textAlign: 'center', color: '#6b7280' }}>
-                    {msg.time}
-                  </td>
-                  <td style={{ padding: '16px', textAlign: 'center' }}>
-                    <button
-                      onClick={() => handleReply(msg.id)}
-                      style={{
-                        background: '#dcfce7',
-                        color: '#16a34a',
-                        border: 'none',
-                        padding: '6px 12px',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontSize: '11px',
-                        fontWeight: '600'
-                      }}
-                    >
-                      Responder
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <table style={styles.table}>
+        <thead>
+          <tr>
+            <th style={styles.th}>Cliente</th>
+            <th style={styles.th}>Profissional</th>
+            <th style={styles.th}>Mensagem</th>
+            <th style={styles.th}>Status</th>
+            <th style={styles.th}>Data</th>
+            <th style={styles.th}>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {messages.map(msg => (
+            <tr
+              key={msg.id}
+              style={msg.status === 'unread' ? styles.unread : {}}
+            >
+              <td style={styles.td}>{msg.clientName}</td>
+              <td style={styles.td}>{msg.profissional}</td>
+              <td style={styles.td}>{msg.message}</td>
+              <td style={styles.td}>
+                <span
+                  style={{
+                    ...styles.badge,
+                    ...(msg.status === 'unread' ? styles.unreadBadge : styles.readBadge)
+                  }}
+                >
+                  {msg.status === 'unread' ? 'Não lida' : 'Lida'}
+                </span>
+              </td>
+              <td style={styles.td}>{msg.date}</td>
+              <td style={styles.td}>
+                {msg.status === 'unread' && (
+                  <button
+                    style={{ ...styles.button, ...styles.markButton }}
+                    onClick={() => handleMarkAsRead(msg.id)}
+                  >
+                    Marcar como lida
+                  </button>
+                )}
+                <button
+                  style={{ ...styles.button, ...styles.deleteButton }}
+                  onClick={() => handleDelete(msg.id)}
+                >
+                  Deletar
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {messages.length === 0 && (
+        <p style={{ textAlign: 'center', marginTop: '20px', color: '#6b7280' }}>
+          Nenhuma mensagem encontrada.
+        </p>
+      )}
     </div>
   )
 }
