@@ -1,106 +1,70 @@
-import { useNavigate } from 'react-router-dom'
-
 export default function Footer() {
-  const navigate = useNavigate()
+  const styles = {
+    footer: {
+      backgroundColor: '#1f2937',
+      color: '#f3f4f6',
+      padding: '40px 20px',
+      marginTop: '40px'
+    },
+    container: {
+      maxWidth: '1200px',
+      margin: '0 auto',
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+      gap: '30px'
+    },
+    section: {
+      marginBottom: '20px'
+    },
+    heading: {
+      fontSize: '16px',
+      fontWeight: 'bold',
+      marginBottom: '15px',
+      color: '#16a34a'
+    },
+    link: {
+      display: 'block',
+      color: '#d1d5db',
+      textDecoration: 'none',
+      marginBottom: '8px',
+      fontSize: '14px'
+    },
+    copyright: {
+      textAlign: 'center',
+      paddingTop: '20px',
+      marginTop: '30px',
+      borderTop: '1px solid #374151',
+      fontSize: '12px',
+      color: '#9ca3af'
+    }
+  }
 
   return (
-    <footer style={{
-      background: '#111827',
-      color: '#e5e7eb',
-      marginTop: '100px',
-      paddingTop: '80px',
-      paddingBottom: '40px'
-    }}>
-      <div style={{
-        maxWidth: '1400px',
-        margin: '0 auto',
-        padding: '0 16px',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        gap: '60px',
-        marginBottom: '60px'
-      }}>
-        <div>
-          <h3 style={{
-            fontSize: '24px',
-            fontWeight: '900',
-            marginBottom: '16px',
-            color: '#16a34a'
-          }}>
-            🚀 ResolveAi
-          </h3>
-          <p style={{
-            fontSize: '14px',
-            lineHeight: '1.8',
-            color: '#9ca3af',
-            marginBottom: '24px'
-          }}>
-            Conectando clientes a profissionais. Problemas resolvidos. Rápido.
+    <footer style={styles.footer}>
+      <div style={styles.container}>
+        <div style={styles.section}>
+          <h3 style={styles.heading}>Sobre</h3>
+          <p style={{ color: '#d1d5db', fontSize: '14px' }}>
+            ResolveAi conecta você com profissionais qualificados de confiança.
           </p>
         </div>
-
-        <div>
-          <h4 style={{
-            fontSize: '16px',
-            fontWeight: '800',
-            marginBottom: '20px',
-            color: 'white'
-          }}>
-            Para Clientes
-          </h4>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-            <li style={{ marginBottom: '12px' }}>
-              <button onClick={() => navigate('/')} style={{
-                background: 'none',
-                border: 'none',
-                color: '#9ca3af',
-                fontSize: '14px',
-                cursor: 'pointer'
-              }}>
-                ➤ Buscar Profissionais
-              </button>
-            </li>
-            <li style={{ marginBottom: '12px' }}>
-              <button onClick={() => navigate('/')} style={{
-                background: 'none',
-                border: 'none',
-                color: '#9ca3af',
-                fontSize: '14px',
-                cursor: 'pointer'
-              }}>
-                ➤ Como Funciona
-              </button>
-            </li>
-          </ul>
+        
+        <div style={styles.section}>
+          <h3 style={styles.heading}>Links Rápidos</h3>
+          <a href="/" style={styles.link}>Início</a>
+          <a href="/professional-form" style={styles.link}>Cadastrar Serviço</a>
+          <a href="/messages" style={styles.link}>Mensagens</a>
         </div>
-
-        <div>
-          <h4 style={{
-            fontSize: '16px',
-            fontWeight: '800',
-            marginBottom: '20px',
-            color: 'white'
-          }}>
-            Contato
-          </h4>
-          <p style={{ fontSize: '14px', color: '#9ca3af', margin: '0 0 8px 0' }}>
-            📧 contato@resolveai.com
-          </p>
-          <p style={{ fontSize: '14px', color: '#9ca3af', margin: 0 }}>
-            📱 (11) 98765-4321
-          </p>
+        
+        <div style={styles.section}>
+          <h3 style={styles.heading}>Contato</h3>
+          <a href="mailto:contato@resolveai.com" style={styles.link}>contato@resolveai.com</a>
+          <a href="tel:+5542998765432" style={styles.link}>(42) 99876-5432</a>
         </div>
       </div>
-
-      <div style={{
-        borderTop: '1px solid #374151',
-        paddingTop: '24px',
-        fontSize: '12px',
-        color: '#6b7280'
-      }}>
-        <p style={{ margin: 0 }}>
-          © 2024 ResolveAi
-        </p>
+      
+      <div style={styles.copyright}>
+        <p>&copy; 2024 ResolveAi. Todos os direitos reservados.</p>
       </div>
     </footer>
   )
