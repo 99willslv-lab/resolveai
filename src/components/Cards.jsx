@@ -3,37 +3,13 @@ import { supabase } from '../utils/supabase.js'
 
 function Estrelas({ nota }) {
   return (
-    <div className="flex gap-0.5">
-      {[1,2,3,4,5].map(i => (
-        <span key={i} className={`text-sm ${i <= Math.round(nota) ? 'text-[#FFD600]' : 'text-white/20'}`}>★</span>
-      ))}
-    </div>
-  )
-}
-
-function Carrossel({ imagens, nome }) {
-  const [idx, setIdx] = useState(0)
-  if (!imagens?.length) return (
-    <div className="h-48 bg-white/5 flex items-center justify-center rounded-t-2xl">
-      <span className="text-4xl">👷</span>
-    </div>
-  )
-  return (
-    <div className="relative h-48 overflow-hidden rounded-t-2xl">
-      <img src={imagens[idx]?.url} alt={nome} className="w-full h-full object-cover" />
-      {imagens.length > 1 && (
-        <>
-          <button onClick={e => { e.stopPropagation(); setIdx(i => (i - 1 + imagens.length) % imagens.length) }}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 rounded-full w-7 h-7 flex items-center justify-center text-white text-sm hover:bg-black/70">‹</button>
-          <button onClick={e => { e.stopPropagation(); setIdx(i => (i + 1) % imagens.length) }}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 rounded-full w-7 h-7 flex items-center justify-center text-white text-sm hover:bg-black/70">›</button>
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
-            {imagens.map((_, i) => (
-              <span key={i} className={`block w-1.5 h-1.5 rounded-full ${i === idx ? 'bg-white' : 'bg-white/40'}`} />
-            ))}
-          </div>
-        </>
-      )}
+    <div className="flex items-center gap-1">
+      <div className="flex gap-0.5">
+        {[1, 2, 3, 4, 5].map(i => (
+          <span key={i} className={`text-sm ${i <= Math.round(nota) ? 'text-[#FFD600]' : 'text-white/20'}`}>★</span>
+        ))}
+      </div>
+      <span className="text-sm font-semibold text-white">{nota?.toFixed(1)}</span>
     </div>
   )
 }
@@ -74,59 +50,102 @@ export default function Cards({ filtroCategoria, onMensagem, onAvaliar, onVerPer
   )
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-16">
+    <section className="mx-auto max-w-7xl px-4 sm:px-6 py-16">
       <h2 className="font-display text-3xl font-extrabold text-white mb-2">
-        {filtroCategoria ? filtroCategoria : 'Todos os profissionais'}
+        {filtroCategoria ? filtroCategoria : 'Profissionais Verificados'}
       </h2>
-      <p className="text-white/50 mb-10">{profissionais.length} disponíveis</p>
+      <p className="text-white/50 mb-12">{profissionais.length} disponíveis</p>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {profissionais.map(prof => (
           <div
             key={prof.id}
-            className="group rounded-2xl border border-white/10 bg-white/5 overflow-hidden hover:border-[#FF5C00]/40 transition-all duration-300 cursor-pointer"
+            className="group h-full bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-[#FF5C00]/40 hover:shadow-xl hover:shadow-[#FF5C00]/10 transition-all duration-300 hover:scale-102 cursor-pointer flex flex-col"
             onClick={() => onVerPerfil(prof)}
           >
-            <Carrossel imagens={prof.profissional_imagens} nome={prof.nome} />
+            {/* Imagem */}
+            <div className="relative h-48 overflow-hidden bg-gradient-to-br from-white/10 to-white/5">
+              {prof.profissional_imagens?.length > 0 ? (
+                <img
+                  src={prof.profissional_imagens[0].url}
+                  alt={prof.nome}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-5xl opacity-20">👷</div>
+              )}
+              
+              {/* Status Online */}
+              <div className="absolute top-3 right-3 flex items-center gap-1 bg-black/60 backdrop-blur-sm px-2.5 py-1.5 rounded-full">
+                <span className="w-2 h-2 rounded-full bg-[#00C896]"></span>
+                <span className="text-xs font-semibold text-white">Online</span>
+              </div>
 
-            <div className="p-5">
-              <div className="flex items-start justify-between mb-2">
-                <div>
-                  <h3 className="font-semibold text-white text-lg leading-tight">{prof.nome}</h3>
-                  <span className="text-xs text-[#FF5C00] font-medium">{prof.categoria}</span>
+              {/* Badge Prova Social */}
+              {prof.total_avaliacoes > 20 && (
+                <div className="absolute bottom-3 left-3 bg-[#FF5C00]/90 backdrop-blur-sm px-2.5 py-1.5 rounded-full flex items-center gap-1">
+                  <span>🔥</span>
+                  <span className="text-xs font-semibold text-white">{prof.total_avaliacoes}+ atendimentos</span>
                 </div>
-                <span className="text-xs text-white/40 bg-white/5 rounded-full px-2 py-1">{prof.cidade}</span>
+              )}
+            </div>
+
+            {/* Conteúdo */}
+            <div className="p-5 flex flex-col flex-grow">
+              {/* Header: Nome e Cidade */}
+              <div className="mb-3">
+                <h3 className="font-semibold text-white text-lg leading-tight mb-1">{prof.nome}</h3>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-[#FF5C00] font-medium">{prof.categoria}</span>
+                  <span className="text-xs text-white/50 flex items-center gap-1">
+                    📍 {prof.cidade}
+                  </span>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2 mb-3">
+              {/* Avaliação */}
+              <div className="mb-3">
                 <Estrelas nota={prof.avaliacao} />
-                <span className="text-xs text-white/50">{prof.avaliacao?.toFixed(1)} ({prof.total_avaliacoes})</span>
+                <span className="text-xs text-white/40 ml-2">({prof.total_avaliacoes})</span>
               </div>
 
-              {prof.bio && <p className="text-sm text-white/50 mb-4 line-clamp-2">{prof.bio}</p>}
+              {/* Descrição */}
+              {prof.bio && (
+                <p className="text-sm text-white/60 mb-3 line-clamp-2">
+                  {prof.bio}
+                </p>
+              )}
 
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-[#00C896]">
+              {/* Prova Social: Responde Rápido */}
+              <div className="mb-4 flex items-center gap-2 text-xs text-[#00C896] font-medium">
+                <span>⏱️ Responde rápido</span>
+              </div>
+
+              {/* Preço Destacado */}
+              <div className="mb-4 py-3 px-3 rounded-xl bg-[#00C896]/10 border border-[#00C896]/20">
+                <p className="text-xs text-white/60 mb-1">A partir de</p>
+                <p className="text-xl font-bold text-[#00C896]">
                   {prof.preco_min && prof.preco_max
                     ? `R$ ${prof.preco_min}–${prof.preco_max}/h`
                     : prof.preco_min
-                    ? `A partir de R$ ${prof.preco_min}/h`
+                    ? `R$ ${prof.preco_min}/h`
                     : 'Consulte'}
-                </span>
+                </p>
               </div>
 
-              <div className="mt-4 flex gap-2" onClick={e => e.stopPropagation()}>
+              {/* Botões - flex-grow para empurrar pra baixo */}
+              <div className="flex gap-2 mt-auto" onClick={e => e.stopPropagation()}>
                 <button
                   onClick={() => onMensagem(prof)}
-                  className="flex-1 rounded-full bg-[#FF5C00] py-2.5 text-sm font-semibold text-white hover:bg-[#e05200] transition-all"
+                  className="flex-1 rounded-xl bg-[#FF5C00] text-white py-2.5 text-sm font-semibold hover:bg-[#e05200] transition-all duration-200 hover:shadow-lg hover:shadow-[#FF5C00]/30"
                 >
-                  💬 Mensagem
+                  💬 Falar agora
                 </button>
                 <button
                   onClick={() => onAvaliar(prof)}
-                  className="rounded-full border border-white/20 px-4 py-2.5 text-sm text-white hover:bg-white/10 transition-all"
+                  className="px-4 rounded-xl border border-white/20 text-white text-sm font-semibold hover:bg-white/10 hover:border-white/40 transition-all duration-200"
                 >
-                  ★ Avaliar
+                  ⭐
                 </button>
               </div>
             </div>
