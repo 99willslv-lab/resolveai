@@ -1,157 +1,115 @@
-// Adicionar este componente em Admin.jsx antes do export padrão
+// Adicionar esta aba no Admin.jsx depois de "Profissionais"
 
-function GerenciadorFotos({ prof, onFechar, onSalvar }) {
-  const [fotos, setFotos] = useState(prof.profissional_imagens || [])
-  const [uploading, setUploading] = useState(false)
-  const [draggingId, setDraggingId] = useState(null)
-  const fileRef = useRef(null)
-
-  async function handleUpload(e) {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    setUploading(true)
-    const fileName = `${prof.id}-${Date.now()}-${Math.random().toString(36).substring(7)}`
-    
-    const { error: uploadError } = await supabase.storage
-      .from('profissionais')
-      .upload(fileName, file)
-
-    if (!uploadError) {
-      const { data: { publicUrl } } = supabase.storage
-        .from('profissionais')
-        .getPublicUrl(fileName)
-
-      const { data, error: insertError } = await supabase
-        .from('profissional_imagens')
-        .insert({ profissional_id: prof.id, url: publicUrl })
-        .select()
-
-      if (!insertError && data) {
-        setFotos([...fotos, ...data])
-      }
-    }
-    setUploading(false)
-    fileRef.current.value = ''
-  }
-
-  async function deletarFoto(id) {
-    if (!confirm('Deletar essa foto?')) return
-    
-    await supabase.from('profissional_imagens').delete().eq('id', id)
-    setFotos(fotos.filter(f => f.id !== id))
-  }
-
-  async function reordenarFotos(fromIdx, toIdx) {
-    const novaOrdem = [...fotos]
-    const [moved] = novaOrdem.splice(fromIdx, 1)
-    novaOrdem.splice(toIdx, 0, moved)
-    setFotos(novaOrdem)
-  }
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="w-full max-w-lg bg-[#1A1A1A] rounded-3xl border border-white/10 p-6 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-2xl font-bold text-white mb-6">📸 Gerenciar Fotos</h2>
-
-        {/* Upload */}
-        <div className="mb-6">
-          <input ref={fileRef} type="file" accept="image/*" onChange={handleUpload} className="hidden" />
-          <button
-            onClick={() => fileRef.current?.click()}
-            disabled={uploading}
-            className="w-full bg-[#FF5C00] text-white py-3 rounded-xl font-semibold hover:bg-[#e05200] transition disabled:opacity-50 mb-4"
-          >
-            {uploading ? '⏳ Enviando...' : '➕ Adicionar Foto'}
-          </button>
-          <p className="text-xs text-white/50 text-center">Máximo 5 fotos por profissional</p>
-        </div>
-
-        {/* Fotos */}
-        {fotos.length > 0 ? (
-          <div className="space-y-3 mb-6">
-            {fotos.map((foto, idx) => (
-              <div
-                key={foto.id}
-                draggable
-                onDragStart={() => setDraggingId(idx)}
-                onDragOver={e => e.preventDefault()}
-                onDrop={() => {
-                  if (draggingId !== null && draggingId !== idx) {
-                    reordenarFotos(draggingId, idx)
-                    setDraggingId(null)
-                  }
-                }}
-                className={`group relative bg-white/5 border border-white/10 rounded-lg overflow-hidden cursor-grab active:cursor-grabbing transition ${
-                  draggingId === idx ? 'opacity-50' : ''
-                }`}
-              >
-                <img src={foto.url} alt="Foto" className="w-full h-32 object-cover" />
-                
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
-                  <span className="text-2xl">🔄</span>
-                  <button
-                    onClick={() => deletarFoto(foto.id)}
-                    className="bg-red-500/80 hover:bg-red-600 text-white p-2 rounded transition"
-                  >
-                    🗑️
-                  </button>
-                </div>
-
-                {idx === 0 && (
-                  <div className="absolute top-2 left-2 bg-[#FF5C00] text-white px-2 py-1 rounded text-xs font-semibold">
-                    ⭐ Capa
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8 text-white/40">
-            <p className="text-4xl mb-2">📷</p>
-            <p className="text-sm">Nenhuma foto. Adicione uma!</p>
-          </div>
-        )}
-
-        {/* Botões */}
-        <div className="flex gap-3">
-          <button
-            onClick={onFechar}
-            className="flex-1 bg-white/10 text-white py-2 rounded-lg font-semibold hover:bg-white/20 transition"
-          >
-            Fechar
-          </button>
-          <button
-            onClick={() => {
-              onSalvar()
-              onFechar()
-            }}
-            className="flex-1 bg-[#FF5C00] text-white py-2 rounded-lg font-semibold hover:bg-[#e05200] transition"
-          >
-            ✔️ Pronto
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// No card da ADM, trocar o botão de foto por:
-<button
-  onClick={() => setModalGerenciadorFotos(prof)}
-  className="w-full bg-white/5 text-white py-2 rounded-lg text-xs font-semibold hover:bg-white/10 transition"
+{/* Aba Mensagens */}
+<button 
+  onClick={() => setTab('mensagens')} 
+  className={`pb-4 font-semibold transition ${
+    tab === 'mensagens' 
+      ? 'text-[#FF5C00] border-b-2 border-[#FF5C00]' 
+      : 'text-white/50 hover:text-white'
+  }`}
 >
-  📸 Gerenciar Fotos ({prof.profissional_imagens?.length || 0})
+  💬 Mensagens
 </button>
 
-// Adicionar state:
-const [modalGerenciadorFotos, setModalGerenciadorFotos] = useState(null)
+// Adicionar states:
+const [mensagensRecebidas, setMensagensRecebidas] = useState([])
+const [filtroStatusMsg, setFiltroStatusMsg] = useState('novo')
 
-// Adicionar modal no final:
-{modalGerenciadorFotos && (
-  <GerenciadorFotos
-    prof={modalGerenciadorFotos}
-    onFechar={() => setModalGerenciadorFotos(null)}
-    onSalvar={() => setProfissionais([...profissionais])}
-  />
+// Adicionar no useEffect de carregarDados:
+async function carregarMensagens() {
+  let query = supabase
+    .from('mensagens')
+    .select('*, profissionais(nome, categoria)')
+    .order('data_criacao', { ascending: false })
+
+  if (filtroStatusMsg !== 'todos') {
+    query = query.eq('status', filtroStatusMsg)
+  }
+
+  const { data } = await query
+  setMensagensRecebidas(data || [])
+}
+
+carregarMensagens()
+
+// Adicionar conteúdo da aba Mensagens:
+{tab === 'mensagens' && (
+  <div>
+    <div className="mb-6 flex gap-3">
+      <select 
+        value={filtroStatusMsg} 
+        onChange={e => setFiltroStatusMsg(e.target.value)}
+        className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-[#FF5C00]"
+      >
+        <option value="todos">Todas</option>
+        <option value="novo">🆕 Novas</option>
+        <option value="respondido">✅ Respondidas</option>
+        <option value="arquivado">📦 Arquivadas</option>
+      </select>
+    </div>
+
+    <div className="space-y-3">
+      {mensagensRecebidas.length > 0 ? (
+        mensagensRecebidas.map(msg => (
+          <div key={msg.id} className="bg-white/5 border border-white/10 rounded-2xl p-4 hover:border-[#FF5C00]/40 transition">
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex-1">
+                <h3 className="font-semibold text-white">{msg.nome_cliente}</h3>
+                <p className="text-xs text-[#FF5C00]">{msg.profissionais?.nome} • {msg.profissionais?.categoria}</p>
+              </div>
+              <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
+                msg.status === 'novo' ? 'bg-yellow-500/20 text-yellow-300' :
+                msg.status === 'respondido' ? 'bg-green-500/20 text-green-300' :
+                'bg-gray-500/20 text-gray-300'
+              }`}>
+                {msg.status === 'novo' ? '🆕 Novo' : msg.status === 'respondido' ? '✅ Respondido' : '📦 Arquivado'}
+              </span>
+            </div>
+
+            <p className="text-white/70 text-sm mb-3 line-clamp-2">{msg.mensagem}</p>
+
+            <div className="flex items-center justify-between mb-3 text-xs text-white/50">
+              <span>📱 {msg.telefone_cliente}</span>
+              <span>📅 {new Date(msg.data_criacao).toLocaleDateString('pt-BR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => navigator.clipboard.writeText(msg.telefone_cliente)}
+                className="flex-1 bg-white/10 text-white py-2 rounded-lg text-xs font-semibold hover:bg-white/20 transition"
+              >
+                📋 Copiar WhatsApp
+              </button>
+              <a
+                href={`https://wa.me/${msg.telefone_cliente.replace(/\D/g, '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 bg-[#25D366] text-white py-2 rounded-lg text-xs font-semibold hover:bg-[#20BA5C] transition text-center"
+              >
+                💬 Abrir Chat
+              </a>
+              <select
+                value={msg.status}
+                onChange={async (e) => {
+                  await supabase.from('mensagens').update({ status: e.target.value }).eq('id', msg.id)
+                  setMensagensRecebidas(mensagensRecebidas.map(m => m.id === msg.id ? {...m, status: e.target.value} : m))
+                }}
+                className="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-white text-xs focus:outline-none focus:border-[#FF5C00]"
+              >
+                <option value="novo">Novo</option>
+                <option value="respondido">Respondido</option>
+                <option value="arquivado">Arquivado</option>
+              </select>
+            </div>
+          </div>
+        ))
+      ) : (
+        <div className="text-center py-12 text-white/40">
+          <p className="text-4xl mb-2">💬</p>
+          <p>Nenhuma mensagem {filtroStatusMsg !== 'todos' ? filtroStatusMsg : ''}</p>
+        </div>
+      )}
+    </div>
+  </div>
 )}
