@@ -14,6 +14,70 @@ function Estrelas({ nota }) {
   )
 }
 
+function Carrossel({ imagens, nome }) {
+  const [idx, setIdx] = useState(0)
+
+  if (!imagens?.length) {
+    return (
+      <div className="relative h-48 bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center rounded-t-2xl">
+        <span className="text-5xl opacity-20">👷</span>
+      </div>
+    )
+  }
+
+  return (
+    <div className="relative h-48 overflow-hidden rounded-t-2xl group">
+      <img
+        src={imagens[idx]?.url}
+        alt={nome}
+        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      />
+
+      {imagens.length > 1 && (
+        <>
+          {/* Seta Esquerda */}
+          <button
+            onClick={e => {
+              e.stopPropagation()
+              setIdx(i => (i - 1 + imagens.length) % imagens.length)
+            }}
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 rounded-full w-8 h-8 flex items-center justify-center text-white text-sm transition z-10"
+          >
+            ‹
+          </button>
+
+          {/* Seta Direita */}
+          <button
+            onClick={e => {
+              e.stopPropagation()
+              setIdx(i => (i + 1) % imagens.length)
+            }}
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 rounded-full w-8 h-8 flex items-center justify-center text-white text-sm transition z-10"
+          >
+            ›
+          </button>
+
+          {/* Indicadores */}
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+            {imagens.map((_, i) => (
+              <button
+                key={i}
+                onClick={e => {
+                  e.stopPropagation()
+                  setIdx(i)
+                }}
+                className={`block w-2 h-2 rounded-full transition ${
+                  i === idx ? 'bg-white' : 'bg-white/40 hover:bg-white/60'
+                }`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
 export default function Cards({ filtroCategoria, onMensagem, onAvaliar, onVerPerfil }) {
   const [profissionais, setProfissionais] = useState([])
   const [loading, setLoading] = useState(true)
@@ -63,36 +127,11 @@ export default function Cards({ filtroCategoria, onMensagem, onAvaliar, onVerPer
             className="group h-full bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-[#FF5C00]/40 hover:shadow-xl hover:shadow-[#FF5C00]/10 transition-all duration-300 hover:scale-102 cursor-pointer flex flex-col"
             onClick={() => onVerPerfil(prof)}
           >
-            {/* Imagem */}
-            <div className="relative h-48 overflow-hidden bg-gradient-to-br from-white/10 to-white/5">
-              {prof.profissional_imagens?.length > 0 ? (
-                <img
-                  src={prof.profissional_imagens[0].url}
-                  alt={prof.nome}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-5xl opacity-20">👷</div>
-              )}
-              
-              {/* Status Online */}
-              <div className="absolute top-3 right-3 flex items-center gap-1 bg-black/60 backdrop-blur-sm px-2.5 py-1.5 rounded-full">
-                <span className="w-2 h-2 rounded-full bg-[#00C896]"></span>
-                <span className="text-xs font-semibold text-white">Online</span>
-              </div>
-
-              {/* Badge Prova Social */}
-              {prof.total_avaliacoes > 20 && (
-                <div className="absolute bottom-3 left-3 bg-[#FF5C00]/90 backdrop-blur-sm px-2.5 py-1.5 rounded-full flex items-center gap-1">
-                  <span>🔥</span>
-                  <span className="text-xs font-semibold text-white">{prof.total_avaliacoes}+ atendimentos</span>
-                </div>
-              )}
-            </div>
+            {/* Carrossel */}
+            <Carrossel imagens={prof.profissional_imagens} nome={prof.nome} />
 
             {/* Conteúdo */}
             <div className="p-5 flex flex-col flex-grow">
-              {/* Header: Nome e Cidade */}
               <div className="mb-3">
                 <h3 className="font-semibold text-white text-lg leading-tight mb-1">{prof.nome}</h3>
                 <div className="flex items-center justify-between">
@@ -103,25 +142,21 @@ export default function Cards({ filtroCategoria, onMensagem, onAvaliar, onVerPer
                 </div>
               </div>
 
-              {/* Avaliação */}
               <div className="mb-3">
                 <Estrelas nota={prof.avaliacao} />
                 <span className="text-xs text-white/40 ml-2">({prof.total_avaliacoes})</span>
               </div>
 
-              {/* Descrição */}
               {prof.bio && (
                 <p className="text-sm text-white/60 mb-3 line-clamp-2">
                   {prof.bio}
                 </p>
               )}
 
-              {/* Prova Social: Responde Rápido */}
               <div className="mb-4 flex items-center gap-2 text-xs text-[#00C896] font-medium">
                 <span>⏱️ Responde rápido</span>
               </div>
 
-              {/* Preço Destacado */}
               <div className="mb-4 py-3 px-3 rounded-xl bg-[#00C896]/10 border border-[#00C896]/20">
                 <p className="text-xs text-white/60 mb-1">A partir de</p>
                 <p className="text-xl font-bold text-[#00C896]">
@@ -133,7 +168,6 @@ export default function Cards({ filtroCategoria, onMensagem, onAvaliar, onVerPer
                 </p>
               </div>
 
-              {/* Botões - flex-grow para empurrar pra baixo */}
               <div className="flex gap-2 mt-auto" onClick={e => e.stopPropagation()}>
                 <button
                   onClick={() => onMensagem(prof)}
