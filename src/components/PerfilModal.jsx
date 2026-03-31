@@ -126,7 +126,9 @@ export default function PerfilModal({ profissional, onFechar }) {
             </button>
             {profissional.telefone && (
               
-                href={`https://wa.me/${profissional.telefone.replace(/\D/g, '')}`}
+                {profissional.telefone && (
+              
+                href={`https://wa.me/${profissional.telefone.replace(/[^\d]/g, '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 bg-[#FF5C00] text-white py-3 rounded-xl font-semibold hover:bg-[#e05200] transition text-center"
@@ -134,4 +136,3 @@ export default function PerfilModal({ profissional, onFechar }) {
                 💬 Contatar
               </a>
             )}
-          </div>
