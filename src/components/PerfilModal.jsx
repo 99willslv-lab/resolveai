@@ -21,10 +21,13 @@ export default function PerfilModal({ profissional, onFechar }) {
     carregar()
   }, [profissional.id])
 
+  const whatsappUrl = profissional.telefone 
+    ? `https://wa.me/${profissional.telefone.replace(/[^\d]/g, '')}`
+    : null
+
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-4">
       <div className="w-full max-w-2xl bg-[#1A1A1A] rounded-3xl border border-white/10 overflow-hidden max-h-[90vh] overflow-y-auto">
-        {/* Header com imagem */}
         <div className="relative">
           {profissional.profissional_imagens?.length > 0 ? (
             <img src={profissional.profissional_imagens[0].url} alt={profissional.nome} className="w-full h-64 object-cover" />
@@ -37,13 +40,11 @@ export default function PerfilModal({ profissional, onFechar }) {
         </div>
 
         <div className="px-6 py-6">
-          {/* Info básica */}
           <div className="mb-6">
             <h1 className="text-3xl font-bold text-white mb-2">{profissional.nome}</h1>
             <p className="text-[#FF5C00] font-semibold text-lg mb-2">{profissional.categoria}</p>
             <p className="text-white/50 mb-4">📍 {profissional.cidade}</p>
 
-            {/* Rating */}
             <div className="flex items-center gap-3 mb-4">
               <div className="flex gap-0.5">
                 {[1, 2, 3, 4, 5].map(i => (
@@ -55,7 +56,6 @@ export default function PerfilModal({ profissional, onFechar }) {
             </div>
           </div>
 
-          {/* Sobre */}
           {profissional.bio && (
             <div className="mb-6 pb-6 border-b border-white/10">
               <h2 className="text-white font-semibold mb-3">Sobre</h2>
@@ -63,7 +63,6 @@ export default function PerfilModal({ profissional, onFechar }) {
             </div>
           )}
 
-          {/* Preço */}
           {(profissional.preco_min || profissional.preco_max) && (
             <div className="mb-6 pb-6 border-b border-white/10">
               <h2 className="text-white font-semibold mb-3">Preço</h2>
@@ -77,7 +76,6 @@ export default function PerfilModal({ profissional, onFechar }) {
             </div>
           )}
 
-          {/* Contato */}
           {(profissional.telefone || profissional.email) && (
             <div className="mb-6 pb-6 border-b border-white/10">
               <h2 className="text-white font-semibold mb-3">Contato</h2>
@@ -94,7 +92,6 @@ export default function PerfilModal({ profissional, onFechar }) {
             </div>
           )}
 
-          {/* Avaliações */}
           {!carregando && avaliacoes.length > 0 && (
             <div className="mb-6 pb-6 border-b border-white/10">
               <h2 className="text-white font-semibold mb-4">Avaliações recentes</h2>
@@ -116,7 +113,6 @@ export default function PerfilModal({ profissional, onFechar }) {
             </div>
           )}
 
-          {/* Botões de ação */}
           <div className="flex gap-3">
             <button
               onClick={onFechar}
@@ -124,11 +120,9 @@ export default function PerfilModal({ profissional, onFechar }) {
             >
               Fechar
             </button>
-            {profissional.telefone && (
+            {whatsappUrl && (
               
-                {profissional.telefone && (
-              
-                href={`https://wa.me/${profissional.telefone.replace(/[^\d]/g, '')}`}
+                href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 bg-[#FF5C00] text-white py-3 rounded-xl font-semibold hover:bg-[#e05200] transition text-center"
@@ -136,3 +130,9 @@ export default function PerfilModal({ profissional, onFechar }) {
                 💬 Contatar
               </a>
             )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
