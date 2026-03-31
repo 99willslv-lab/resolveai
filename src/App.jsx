@@ -7,6 +7,7 @@ import AvaliarModal from './components/AvaliarModal'
 import PerfilModal from './components/PerfilModal'
 import Admin from './components/Admin'
 import CadastroPage from './components/CadastroPage'
+import Footer from './components/Footer'
 
 function HomePage() {
   const [filtroCategoria, setFiltroCategoria] = useState('')
@@ -26,7 +27,6 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] via-purple-900/20 to-[#1a1a1a]">
-      {/* Header */}
       <header className="sticky top-0 z-40 border-b border-white/10 bg-black/40 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-white">Resolve<span className="text-[#FF5C00]">Ai</span></h1>
@@ -39,7 +39,6 @@ function HomePage() {
         </div>
       </header>
 
-      {/* Hero */}
       <section className="max-w-6xl mx-auto px-6 py-20 text-center">
         <div className="mb-4 inline-block">
           <span className="text-sm text-[#FF5C00] font-medium border border-[#FF5C00] rounded-full px-4 py-1">🌟 Castro • Carambeí • Tibagi</span>
@@ -52,7 +51,6 @@ function HomePage() {
           Profissionais verificados perto de você. Rápido, confiável e sem complicação.
         </p>
 
-        {/* Stats */}
         <div className="grid grid-cols-3 gap-6 mb-16 text-center">
           <div>
             <p className="text-3xl font-bold text-[#FF5C00]">340+</p>
@@ -68,7 +66,6 @@ function HomePage() {
           </div>
         </div>
 
-        {/* Botões principais */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
           <button onClick={() => document.querySelector('[data-buscar]')?.scrollIntoView({ behavior: 'smooth' })} className="bg-[#FF5C00] text-white px-8 py-4 rounded-full font-semibold hover:bg-[#e05200] transition text-lg">
             🔍 Buscar profissional
@@ -79,7 +76,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* O que você precisa? */}
       <section className="max-w-6xl mx-auto px-6 mb-16" data-buscar>
         <p className="text-white/50 text-sm font-medium mb-4">O QUE VOCÊ PRECISA?</p>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
@@ -99,7 +95,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Cards */}
       <Cards
         filtroCategoria={filtroCategoria}
         onMensagem={prof => {
@@ -110,14 +105,6 @@ function HomePage() {
         onVerPerfil={setProf}
       />
 
-      {/* Footer */}
-      <footer className="border-t border-white/10 bg-black/40 backdrop-blur-md mt-20">
-        <div className="max-w-6xl mx-auto px-6 py-8 text-center text-white/50 text-sm">
-          <p>© 2024 ResolveAi. Todos os direitos reservados.</p>
-        </div>
-      </footer>
-
-      {/* Modals */}
       {profissionalSelecionado && !categoriasMensagem[profissionalSelecionado.id] && (
         <PerfilModal profissional={profissionalSelecionado} onFechar={() => setProf(null)} />
       )}
@@ -138,6 +125,8 @@ function HomePage() {
           onFechar={() => setModalAvaliar(null)}
         />
       )}
+
+      <Footer />
     </div>
   )
 }
