@@ -1,86 +1,138 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { supabase } from '../utils/supabase.js'
 
-function Estrelas({ nota }) {
+export default function PerfilModal({ profissional, onFechar }) {
+  const [avaliacoes, setAvaliacoes] = useState([])
+  const [carregando, setCarregando] = useState(true)
+
+  useEffect(() => {
+    async function carregar() {
+      const { data } = await supabase
+        .from('avaliacoes')
+        .select('*')
+        .eq('profissional_id', profissional.id)
+        .order('created_at', { ascending: false })
+        .limit(5)
+
+      setAvaliacoes(data || [])
+      setCarregando(false)
+    }
+
+    carregar()
+  }, [profissional.id])
+
   return (
-    <div className="flex gap-0.5">
-      {[1,2,3,4,5].map(i => (
-        <span key={i} className={`text-lg ${i <= Math.round(nota) ? 'text-[#FFD600]' : 'text-white/20'}`}>★</span>
-      ))}
-    </div>
-  )
-}
-
-export default function PerfilModal({ profissional, onFechar, onMensagem }) {
-  const [idx, setIdx] = useState(0)
-  const imgs = profissional.profissional_imagens || []
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="w-full max-w-2xl bg-[#1A1A1A] rounded-3xl border border-white/10 overflow-hidden my-4">
-
-        {/* Carrossel grande */}
-        <div className="relative h-72 bg-white/5">
-          {imgs.length ? (
-            <>
-              <img src={imgs[idx]?.url} alt={profissional.nome} className="w-full h-full object-cover" />
-              {imgs.length > 1 && (
-                <>
-                  <button onClick={() => setIdx(i => (i - 1 + imgs.length) % imgs.length)}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/60 rounded-full w-9 h-9 flex items-center justify-center text-white hover:bg-black/80">‹</button>
-                  <button onClick={() => setIdx(i => (i + 1) % imgs.length)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/60 rounded-full w-9 h-9 flex items-center justify-center text-white hover:bg-black/80">›</button>
-                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-                    {imgs.map((_, i) => (
-                      <button key={i} onClick={() => setIdx(i)}
-                        className={`w-2 h-2 rounded-full transition-all ${i === idx ? 'bg-white w-4' : 'bg-white/40'}`} />
-                    ))}
-                  </div>
-                </>
-              )}
-            </>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+      <div className="w-full max-w-2xl bg-[#1A1A1A] rounded-3xl border border-white/10 overflow-hidden max-h-[90vh] overflow-y-auto">
+        {/* Header com imagem */}
+        <div className="relative">
+          {profissional.profissional_imagens?.length > 0 ? (
+            <img src={profissional.profissional_imagens[0].url} alt={profissional.nome} className="w-full h-64 object-cover" />
           ) : (
-            <div className="h-full flex items-center justify-center text-6xl">👷</div>
+            <div className="w-full h-64 bg-gradient-to-r from-[#FF5C00] to-[#e05200] flex items-center justify-center">
+              <span className="text-6xl">👷</span>
+            </div>
           )}
+          <button onClick={onFechar} className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 flex items-center justify-center">✕</button>
         </div>
 
-        {/* Info */}
-        <div className="p-6">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <h2 className="font-display text-2xl font-extrabold text-white">{profissional.nome}</h2>
-              <span className="text-[#FF5C00] font-medium">{profissional.categoria}</span>
-              <span className="text-white/40 mx-2">·</span>
-              <span className="text-white/40">{profissional.cidade}</span>
+        <div className="px-6 py-6">
+          {/* Info básica */}
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold text-white mb-2">{profissional.nome}</h1>
+            <p className="text-[#FF5C00] font-semibold text-lg mb-2">{profissional.categoria}</p>
+            <p className="text-white/50 mb-4">📍 {profissional.cidade}</p>
+
+            {/* Rating */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex gap-0.5">
+                {[1, 2, 3, 4, 5].map(i => (
+                  <span key={i} className={`text-lg ${i <= Math.round(profissional.avaliacao) ? 'text-[#FFD600]' : 'text-white/20'}`}>★</span>
+                ))}
+              </div>
+              <span className="text-white font-semibold">{profissional.avaliacao?.toFixed(1)}</span>
+              <span className="text-white/50">({profissional.total_avaliacoes} avaliações)</span>
             </div>
-            <button onClick={onFechar} className="text-white/50 hover:text-white text-xl ml-4">✕</button>
           </div>
 
-          <div className="flex items-center gap-3 mb-4">
-            <Estrelas nota={profissional.avaliacao} />
-            <span className="text-white font-semibold">{profissional.avaliacao?.toFixed(1)}</span>
-            <span className="text-white/40 text-sm">({profissional.total_avaliacoes} avaliações)</span>
-          </div>
-
+          {/* Sobre */}
           {profissional.bio && (
-            <p className="text-white/70 text-sm leading-relaxed mb-4">{profissional.bio}</p>
+            <div className="mb-6 pb-6 border-b border-white/10">
+              <h2 className="text-white font-semibold mb-3">Sobre</h2>
+              <p className="text-white/70">{profissional.bio}</p>
+            </div>
           )}
 
-          <div className="flex items-center justify-between mb-6">
-            <span className="text-lg font-bold text-[#00C896]">
-              {profissional.preco_min && profissional.preco_max
-                ? `R$ ${profissional.preco_min}–${profissional.preco_max}/h`
-                : profissional.preco_min
-                ? `A partir de R$ ${profissional.preco_min}/h`
-                : 'Consulte o valor'}
-            </span>
-          </div>
+          {/* Preço */}
+          {(profissional.preco_min || profissional.preco_max) && (
+            <div className="mb-6 pb-6 border-b border-white/10">
+              <h2 className="text-white font-semibold mb-3">Preço</h2>
+              <p className="text-[#00C896] text-xl font-bold">
+                {profissional.preco_min && profissional.preco_max
+                  ? `R$ ${profissional.preco_min} - R$ ${profissional.preco_max}/h`
+                  : profissional.preco_min
+                  ? `A partir de R$ ${profissional.preco_min}/h`
+                  : 'Consulte'}
+              </p>
+            </div>
+          )}
 
-          <button
-            onClick={() => onMensagem(profissional)}
-            className="w-full rounded-full bg-[#FF5C00] py-4 font-semibold text-white text-lg hover:bg-[#e05200] transition shadow-lg shadow-[#FF5C00]/30"
-          >
-            💬 Enviar mensagem
-          </button>
+          {/* Contato */}
+          {(profissional.telefone || profissional.email) && (
+            <div className="mb-6 pb-6 border-b border-white/10">
+              <h2 className="text-white font-semibold mb-3">Contato</h2>
+              {profissional.telefone && (
+                <p className="text-white/70 mb-2">
+                  📱 {profissional.telefone}
+                </p>
+              )}
+              {profissional.email && (
+                <p className="text-white/70">
+                  📧 {profissional.email}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Avaliações */}
+          {!carregando && avaliacoes.length > 0 && (
+            <div className="mb-6 pb-6 border-b border-white/10">
+              <h2 className="text-white font-semibold mb-4">Avaliações recentes</h2>
+              <div className="space-y-3">
+                {avaliacoes.map(av => (
+                  <div key={av.id} className="bg-white/5 rounded-xl p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map(i => (
+                          <span key={i} className={`text-sm ${i <= av.nota ? 'text-[#FFD600]' : 'text-white/20'}`}>★</span>
+                        ))}
+                      </div>
+                      <span className="text-white/50 text-xs">{new Date(av.created_at).toLocaleDateString('pt-BR')}</span>
+                    </div>
+                    <p className="text-white/80 text-sm">{av.comentario}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Botões de ação */}
+          <div className="flex gap-3">
+            <button
+              onClick={onFechar}
+              className="flex-1 bg-white/10 text-white py-3 rounded-xl font-semibold hover:bg-white/20 transition"
+            >
+              Fechar
+            </button>
+            
+              href={`https://wa.me/${profissional.telefone?.replace(/\D/g, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 bg-[#FF5C00] text-white py-3 rounded-xl font-semibold hover:bg-[#e05200] transition text-center"
+            >
+              💬 Contatar
+            </a>
+          </div>
         </div>
       </div>
     </div>
