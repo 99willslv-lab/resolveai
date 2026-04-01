@@ -35,7 +35,6 @@ function Carrossel({ imagens, nome }) {
 
       {imagens.length > 1 && (
         <>
-          {/* Seta Esquerda */}
           <button
             onClick={e => {
               e.stopPropagation()
@@ -46,7 +45,6 @@ function Carrossel({ imagens, nome }) {
             ‹
           </button>
 
-          {/* Seta Direita */}
           <button
             onClick={e => {
               e.stopPropagation()
@@ -57,7 +55,6 @@ function Carrossel({ imagens, nome }) {
             ›
           </button>
 
-          {/* Indicadores */}
           <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
             {imagens.map((_, i) => (
               <button
@@ -127,10 +124,8 @@ export default function Cards({ filtroCategoria, onMensagem, onAvaliar, onVerPer
             className="group h-full bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-[#FF5C00]/40 hover:shadow-xl hover:shadow-[#FF5C00]/10 transition-all duration-300 hover:scale-102 cursor-pointer flex flex-col"
             onClick={() => onVerPerfil(prof)}
           >
-            {/* Carrossel */}
             <Carrossel imagens={prof.profissional_imagens} nome={prof.nome} />
 
-            {/* Conteúdo */}
             <div className="p-5 flex flex-col flex-grow">
               <div className="mb-3">
                 <h3 className="font-semibold text-white text-lg leading-tight mb-1">{prof.nome}</h3>
