@@ -14,62 +14,36 @@ function Estrelas({ nota }) {
   )
 }
 
-function Carrossel({ imagens, nome }) {
-  const [idx, setIdx] = useState(0)
-
-  if (!imagens?.length) {
-    return (
-      <div className="relative h-48 bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center rounded-t-2xl">
-        <span className="text-5xl opacity-20">👷</span>
-      </div>
-    )
-  }
+function ImagemPerfil({ src, nome }) {
+  const [loaded, setLoaded] = useState(false)
+  const [erro, setErro] = useState(false)
 
   return (
-    <div className="relative h-48 overflow-hidden rounded-t-2xl group">
-      <img
-        src={imagens[idx]?.url}
-        alt={nome}
-        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-      />
-
-      {imagens.length > 1 && (
+    <div className="relative w-full aspect-video bg-gradient-to-br from-white/10 to-white/5 rounded-t-2xl overflow-hidden">
+      {src && !erro ? (
         <>
-          <button
-            onClick={e => {
-              e.stopPropagation()
-              setIdx(i => (i - 1 + imagens.length) % imagens.length)
-            }}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 rounded-full w-8 h-8 flex items-center justify-center text-white text-sm transition z-10"
-          >
-            ‹
-          </button>
-
-          <button
-            onClick={e => {
-              e.stopPropagation()
-              setIdx(i => (i + 1) % imagens.length)
-            }}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 rounded-full w-8 h-8 flex items-center justify-center text-white text-sm transition z-10"
-          >
-            ›
-          </button>
-
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
-            {imagens.map((_, i) => (
-              <button
-                key={i}
-                onClick={e => {
-                  e.stopPropagation()
-                  setIdx(i)
-                }}
-                className={`block w-2 h-2 rounded-full transition ${
-                  i === idx ? 'bg-white' : 'bg-white/40 hover:bg-white/60'
-                }`}
-              />
-            ))}
-          </div>
+          {/* Skeleton loader enquanto carrega */}
+          {!loaded && (
+            <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/20 to-white/10 animate-pulse" />
+          )}
+          
+          {/* Imagem com lazy loading */}
+          <img
+            src={src}
+            alt={nome}
+            loading="lazy"
+            onLoad={() => setLoaded(true)}
+            onError={() => setErro(true)}
+            className={`w-full h-full object-cover transition-opacity duration-300 ${
+              loaded ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
         </>
+      ) : (
+        /* Fallback placeholder */
+        <div className="w-full h-full flex items-center justify-center">
+          <div className="text-5xl opacity-20">👷</div>
+        </div>
       )}
     </div>
   )
@@ -84,7 +58,7 @@ export default function Cards({ filtroCategoria, onVerPerfil }) {
       setLoading(true)
       let query = supabase
         .from('profissionais')
-        .select('*, profissional_imagens(*)')
+        .select('*')
         .eq('ativo', true)
         .order('avaliacao', { ascending: false })
 
@@ -124,7 +98,8 @@ export default function Cards({ filtroCategoria, onVerPerfil }) {
             className="group h-full bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:border-[#FF5C00]/40 hover:shadow-xl hover:shadow-[#FF5C00]/10 transition-all duration-300 hover:scale-102 cursor-pointer flex flex-col"
             onClick={() => onVerPerfil(prof)}
           >
-            <Carrossel imagens={prof.profissional_imagens} nome={prof.nome} />
+            {/* Imagem com proporção 4:3 */}
+            <ImagemPerfil src={prof.imagem_url} nome={prof.nome} />
 
             <div className="p-5 flex flex-col flex-grow">
               <div className="mb-3">
