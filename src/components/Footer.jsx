@@ -13,20 +13,15 @@ export default function Footer() {
 
         {/* Grid de conteúdo */}
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5 mb-12">
-          {/* Brand */}
+          {/* Brand com logo */}
           <div className="lg:col-span-2">
             <div className="mb-4">
-              <span className="text-2xl font-bold bg-gradient-to-r from-[#22c55e] to-[#16a34a] bg-clip-text text-transparent">Chama9</span>
+              <span className="text-2xl font-black text-white">Chama9</span>
               <p className="text-white/60 text-sm mt-2">Plataforma de intermediação de serviços locais em Castro - PR</p>
             </div>
             <p className="text-white/50 text-sm mb-4">
               Conectando você aos melhores profissionais com rapidez, segurança e sem complicação.
             </p>
-            <div className="flex gap-3">
-              <a href="#" className="text-white/50 hover:text-[#22c55e] transition">
-                🔗
-              </a>
-            </div>
           </div>
 
           {/* Serviços */}
@@ -93,9 +88,9 @@ export default function Footer() {
         </div>
 
         {/* Legal */}
-        <div className="flex flex-col sm:flex-row items-center justify-between text-sm text-white/40">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/40">
           <p>© 2024 Chama9 - Serviços locais em Castro - PR. Todos os direitos reservados.</p>
-          <div className="flex gap-6 mt-4 sm:mt-0">
+          <div className="flex gap-6">
             <a href="#" className="hover:text-[#22c55e] transition">Termos de uso</a>
             <a href="#" className="hover:text-[#22c55e] transition">Privacidade</a>
             <a href="#" className="hover:text-[#22c55e] transition">Cookies</a>
