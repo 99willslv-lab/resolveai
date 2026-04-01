@@ -15,12 +15,20 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5 mb-12">
           {/* Brand com logo */}
           <div className="lg:col-span-2">
-            <div className="mb-4">
-              <span className="text-2xl font-black text-white">Chama9</span>
-              <p className="text-white/60 text-sm mt-2">Plataforma de intermediação de serviços locais em Castro - PR</p>
+            <div className="mb-4 flex items-center gap-2">
+              <img 
+                src="/logo.png" 
+                alt="Chama9" 
+                className="h-10 w-auto object-contain"
+                loading="lazy"
+              />
+              <div>
+                <h3 className="text-white font-black text-lg">Chama9</h3>
+                <p className="text-white/40 text-xs">Castro - PR</p>
+              </div>
             </div>
-            <p className="text-white/50 text-sm mb-4">
-              Conectando você aos melhores profissionais com rapidez, segurança e sem complicação.
+            <p className="text-white/60 text-sm mb-4">
+              Plataforma de intermediação de serviços locais. Conectando você aos melhores profissionais com rapidez, segurança e sem complicação.
             </p>
           </div>
 
