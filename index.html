@@ -2,12 +2,59 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Meta Tags -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ResolveAi</title>
+    <meta name="description" content="Encontre profissionais em Castro PR com rapidez e segurança. Solicite serviços como eletricista, encanador, pintor e mais no Chama9." />
+    <meta name="keywords" content="serviços em Castro PR, eletricista Castro, encanador Castro, pintor Castro, profissionais locais, contratar serviços, Chama9" />
+    <meta name="theme-color" content="#22c55e" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Chama9" />
+    
+    <!-- OG Tags -->
+    <meta property="og:title" content="Chama9 – Serviços locais em Castro PR" />
+    <meta property="og:description" content="Encontre profissionais verificados perto de você em Castro - PR" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://chama9.com.br" />
+    
+    <title>Chama9 – Serviços locais em Castro PR | Encontre profissionais rápido</title>
+    
+    <!-- Vite CSS -->
+    <style>
+      /* Garantir que favicon carregue rápido */
+      @supports (height: 100vh) {
+        html, body {
+          height: 100%;
+          margin: 0;
+          padding: 0;
+        }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Service Worker para PWA -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(err => {
+            console.log('SW registration failed:', err);
+          });
+        });
+      }
+    </script>
   </body>
 </html>
