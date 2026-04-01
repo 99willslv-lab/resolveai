@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../utils/supabase.js'
+import LogoUploadAdmin from './LogoUploadAdmin'
 
 function DashboardStats({ stats }) {
   return (
@@ -33,6 +34,7 @@ export default function Admin() {
   const [editandoId, setEditandoId] = useState(null)
   const [custoProf, setCustoProf] = useState('')
   const [valorCliente, setValorCliente] = useState('')
+  const [activeTab, setActiveTab] = useState('solicitacoes')
 
   function verificarSenha() {
     if (senha === 'resolveai2024') {
@@ -47,7 +49,6 @@ export default function Admin() {
 
     async function carregarDados() {
       try {
-        // Carrega solicitações
         let query = supabase
           .from('solicitacoes_servico')
           .select('*, profissionais(nome, categoria)', { count: 'exact' })
@@ -150,147 +151,183 @@ export default function Admin() {
           </button>
         </div>
 
-        <DashboardStats stats={stats} />
-
-        <div className="mb-6">
-          <select
-            value={filtroStatus}
-            onChange={e => setFiltroStatus(e.target.value)}
-            className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-[#22c55e]"
+        {/* Abas */}
+        <div className="flex gap-2 mb-6 border-b border-white/10">
+          <button
+            onClick={() => setActiveTab('solicitacoes')}
+            className={`px-4 py-3 font-semibold border-b-2 transition ${
+              activeTab === 'solicitacoes'
+                ? 'border-[#22c55e] text-[#22c55e]'
+                : 'border-transparent text-white/50 hover:text-white'
+            }`}
           >
-            <option value="todos">Todas</option>
-            <option value="novo">🆕 Novas</option>
-            <option value="atendimento">🟢 Em Atendimento</option>
-            <option value="fechado">✅ Fechadas</option>
-            <option value="cancelado">❌ Canceladas</option>
-          </select>
+            📝 Solicitações
+          </button>
+          <button
+            onClick={() => setActiveTab('logo')}
+            className={`px-4 py-3 font-semibold border-b-2 transition ${
+              activeTab === 'logo'
+                ? 'border-[#22c55e] text-[#22c55e]'
+                : 'border-transparent text-white/50 hover:text-white'
+            }`}
+          >
+            🎨 Logo & Favicon
+          </button>
         </div>
 
-        <div className="space-y-3">
-          {solicitacoes.length > 0 ? (
-            solicitacoes.map(sol => (
-              <div key={sol.id} className="bg-white/5 border border-white/10 rounded-2xl p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-white">{sol.nome_cliente}</h3>
-                    <p className="text-xs text-[#22c55e]">
-                      {sol.profissionais?.nome} • {sol.profissionais?.categoria}
-                    </p>
-                  </div>
-                  <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
-                    sol.status === 'novo' ? 'bg-yellow-500/20 text-yellow-300' :
-                    sol.status === 'atendimento' ? 'bg-green-500/20 text-green-300' :
-                    sol.status === 'fechado' ? 'bg-blue-500/20 text-blue-300' :
-                    'bg-red-500/20 text-red-300'
-                  }`}>
-                    {sol.status === 'novo' ? '🆕 Novo' : sol.status === 'atendimento' ? '🟢 Atendimento' : sol.status === 'fechado' ? '✅ Fechado' : '❌ Cancelado'}
-                  </span>
-                </div>
+        {/* Aba de Logo */}
+        {activeTab === 'logo' && (
+          <div>
+            <LogoUploadAdmin />
+          </div>
+        )}
 
-                <p className="text-white/70 text-sm mb-3">{sol.descricao_servico}</p>
+        {/* Aba de Solicitações */}
+        {activeTab === 'solicitacoes' && (
+          <>
+            <DashboardStats stats={stats} />
 
-                <div className="text-xs text-white/50 mb-3">
-                  📱 {sol.telefone_cliente} • 📅 {new Date(sol.data_criacao).toLocaleDateString('pt-BR')}
-                </div>
+            <div className="mb-6">
+              <select
+                value={filtroStatus}
+                onChange={e => setFiltroStatus(e.target.value)}
+                className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-[#22c55e]"
+              >
+                <option value="todos">Todas</option>
+                <option value="novo">🆕 Novas</option>
+                <option value="atendimento">🟢 Em Atendimento</option>
+                <option value="fechado">✅ Fechadas</option>
+                <option value="cancelado">❌ Canceladas</option>
+              </select>
+            </div>
 
-                <div className="mb-3 grid grid-cols-3 gap-2 text-xs">
-                  <div className="bg-white/5 rounded-lg p-2">
-                    <p className="text-white/50">Custo Prof</p>
-                    <p className="text-white font-semibold">{sol.custo_profissional ? `R$ ${sol.custo_profissional}` : '-'}</p>
-                  </div>
-                  <div className="bg-white/5 rounded-lg p-2">
-                    <p className="text-white/50">Valor Cliente</p>
-                    <p className="text-white font-semibold">{sol.valor_cliente ? `R$ ${sol.valor_cliente}` : '-'}</p>
-                  </div>
-                  <div className="bg-[#22c55e]/10 rounded-lg p-2">
-                    <p className="text-white/50">Lucro</p>
-                    <p className="text-[#22c55e] font-semibold">
-                      {sol.custo_profissional && sol.valor_cliente ? `R$ ${Math.round(sol.valor_cliente - sol.custo_profissional)}` : '-'}
-                    </p>
-                  </div>
-                </div>
+            <div className="space-y-3">
+              {solicitacoes.length > 0 ? (
+                solicitacoes.map(sol => (
+                  <div key={sol.id} className="bg-white/5 border border-white/10 rounded-2xl p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-white">{sol.nome_cliente}</h3>
+                        <p className="text-xs text-[#22c55e]">
+                          {sol.profissionais?.nome} • {sol.profissionais?.categoria}
+                        </p>
+                      </div>
+                      <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
+                        sol.status === 'novo' ? 'bg-yellow-500/20 text-yellow-300' :
+                        sol.status === 'atendimento' ? 'bg-green-500/20 text-green-300' :
+                        sol.status === 'fechado' ? 'bg-blue-500/20 text-blue-300' :
+                        'bg-red-500/20 text-red-300'
+                      }`}>
+                        {sol.status === 'novo' ? '🆕 Novo' : sol.status === 'atendimento' ? '🟢 Atendimento' : sol.status === 'fechado' ? '✅ Fechado' : '❌ Cancelado'}
+                      </span>
+                    </div>
 
-                {editandoId === sol.id && (
-                  <div className="mb-3 grid grid-cols-2 gap-2">
-                    <input
-                      type="number"
-                      placeholder="Custo Prof"
-                      value={custoProf}
-                      onChange={e => setCustoProf(e.target.value)}
-                      className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-[#22c55e]"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Valor Cliente"
-                      value={valorCliente}
-                      onChange={e => setValorCliente(e.target.value)}
-                      className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-[#22c55e]"
-                    />
-                  </div>
-                )}
+                    <p className="text-white/70 text-sm mb-3">{sol.descricao_servico}</p>
 
-                <div className="flex gap-2 flex-wrap">
-                  <button
-                    onClick={() => navigator.clipboard.writeText(sol.telefone_cliente)}
-                    className="bg-white/10 text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-white/20 transition"
-                  >
-                    📋 Copiar
-                  </button>
-                  <a
-                    href={`https://wa.me/${sol.telefone_cliente.replace(/\D/g, '')}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-[#25D366] text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-[#20BA5C] transition"
-                  >
-                    💬 Chat
-                  </a>
-                  {editandoId === sol.id ? (
-                    <>
+                    <div className="text-xs text-white/50 mb-3">
+                      📱 {sol.telefone_cliente} • 📅 {new Date(sol.data_criacao).toLocaleDateString('pt-BR')}
+                    </div>
+
+                    <div className="mb-3 grid grid-cols-3 gap-2 text-xs">
+                      <div className="bg-white/5 rounded-lg p-2">
+                        <p className="text-white/50">Custo Prof</p>
+                        <p className="text-white font-semibold">{sol.custo_profissional ? `R$ ${sol.custo_profissional}` : '-'}</p>
+                      </div>
+                      <div className="bg-white/5 rounded-lg p-2">
+                        <p className="text-white/50">Valor Cliente</p>
+                        <p className="text-white font-semibold">{sol.valor_cliente ? `R$ ${sol.valor_cliente}` : '-'}</p>
+                      </div>
+                      <div className="bg-[#22c55e]/10 rounded-lg p-2">
+                        <p className="text-white/50">Lucro</p>
+                        <p className="text-[#22c55e] font-semibold">
+                          {sol.custo_profissional && sol.valor_cliente ? `R$ ${Math.round(sol.valor_cliente - sol.custo_profissional)}` : '-'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {editandoId === sol.id && (
+                      <div className="mb-3 grid grid-cols-2 gap-2">
+                        <input
+                          type="number"
+                          placeholder="Custo Prof"
+                          value={custoProf}
+                          onChange={e => setCustoProf(e.target.value)}
+                          className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-[#22c55e]"
+                        />
+                        <input
+                          type="number"
+                          placeholder="Valor Cliente"
+                          value={valorCliente}
+                          onChange={e => setValorCliente(e.target.value)}
+                          className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-[#22c55e]"
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex gap-2 flex-wrap">
                       <button
-                        onClick={() => salvarValores(sol.id)}
-                        className="bg-green-500/20 text-green-300 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-green-500/30 transition"
-                      >
-                        ✅ Salvar
-                      </button>
-                      <button
-                        onClick={() => setEditandoId(null)}
+                        onClick={() => navigator.clipboard.writeText(sol.telefone_cliente)}
                         className="bg-white/10 text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-white/20 transition"
                       >
-                        ❌ Cancelar
+                        📋 Copiar
                       </button>
-                    </>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        setEditandoId(sol.id)
-                        setCustoProf(sol.custo_profissional || '')
-                        setValorCliente(sol.valor_cliente || '')
-                      }}
-                      className="bg-[#22c55e]/20 text-[#22c55e] px-3 py-2 rounded-lg text-xs font-semibold hover:bg-[#22c55e]/30 transition"
-                    >
-                      ✏️ Valores
-                    </button>
-                  )}
-                  <select
-                    value={sol.status}
-                    onChange={e => atualizarStatus(sol.id, e.target.value)}
-                    className="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-white text-xs focus:outline-none focus:border-[#22c55e]"
-                  >
-                    <option value="novo">Novo</option>
-                    <option value="atendimento">Atendimento</option>
-                    <option value="fechado">Fechado</option>
-                    <option value="cancelado">Cancelado</option>
-                  </select>
+                      <a
+                        href={`https://wa.me/${sol.telefone_cliente.replace(/\D/g, '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-[#25D366] text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-[#20BA5C] transition"
+                      >
+                        💬 Chat
+                      </a>
+                      {editandoId === sol.id ? (
+                        <>
+                          <button
+                            onClick={() => salvarValores(sol.id)}
+                            className="bg-green-500/20 text-green-300 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-green-500/30 transition"
+                          >
+                            ✅ Salvar
+                          </button>
+                          <button
+                            onClick={() => setEditandoId(null)}
+                            className="bg-white/10 text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-white/20 transition"
+                          >
+                            ❌ Cancelar
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setEditandoId(sol.id)
+                            setCustoProf(sol.custo_profissional || '')
+                            setValorCliente(sol.valor_cliente || '')
+                          }}
+                          className="bg-[#22c55e]/20 text-[#22c55e] px-3 py-2 rounded-lg text-xs font-semibold hover:bg-[#22c55e]/30 transition"
+                        >
+                          ✏️ Valores
+                        </button>
+                      )}
+                      <select
+                        value={sol.status}
+                        onChange={e => atualizarStatus(sol.id, e.target.value)}
+                        className="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-white text-xs focus:outline-none focus:border-[#22c55e]"
+                      >
+                        <option value="novo">Novo</option>
+                        <option value="atendimento">Atendimento</option>
+                        <option value="fechado">Fechado</option>
+                        <option value="cancelado">Cancelado</option>
+                      </select>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-12 text-white/40">
+                  <p className="text-4xl mb-2">📝</p>
+                  <p>Nenhuma solicitação {filtroStatus !== 'todos' ? filtroStatus : ''}</p>
                 </div>
-              </div>
-            ))
-          ) : (
-            <div className="text-center py-12 text-white/40">
-              <p className="text-4xl mb-2">📝</p>
-              <p>Nenhuma solicitação {filtroStatus !== 'todos' ? filtroStatus : ''}</p>
+              )}
             </div>
-          )}
-        </div>
+          </>
+        )}
       </div>
     </div>
   )
