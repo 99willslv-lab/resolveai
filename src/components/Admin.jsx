@@ -6,7 +6,7 @@ function DashboardStats({ stats }) {
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-4 mb-8">
       <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
         <p className="text-white/50 text-sm mb-2">📝 Solicitações</p>
-        <p className="text-4xl font-bold text-[#FF5C00]">{stats.solicitacoes}</p>
+        <p className="text-4xl font-bold text-[#22c55e]">{stats.solicitacoes}</p>
       </div>
       <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
         <p className="text-white/50 text-sm mb-2">🟢 Em Atendimento</p>
@@ -46,73 +46,87 @@ export default function Admin() {
     if (!autenticado) return
 
     async function carregarDados() {
-      let query = supabase
-        .from('solicitacoes_servico')
-        .select('*, profissionais(nome, categoria)', { count: 'exact' })
-        .order('data_criacao', { ascending: false })
+      try {
+        // Carrega solicitações
+        let query = supabase
+          .from('solicitacoes_servico')
+          .select('*, profissionais(nome, categoria)', { count: 'exact' })
+          .order('data_criacao', { ascending: false })
 
-      if (filtroStatus !== 'todos') {
-        query = query.eq('status', filtroStatus)
+        if (filtroStatus !== 'todos') {
+          query = query.eq('status', filtroStatus)
+        }
+
+        const { data: solic, count: countSolic, error: solicitacoesError } = await query
+
+        if (solicitacoesError) {
+          console.error('Erro ao carregar solicitações:', solicitacoesError)
+        } else {
+          setSolicitacoes(solic || [])
+
+          const emAtendimento = (solic || []).filter(s => s.status === 'atendimento').length
+          const fechadas = (solic || []).filter(s => s.status === 'fechado').length
+          const lucroTotal = (solic || [])
+            .filter(s => s.status === 'fechado' && s.valor_cliente && s.custo_profissional)
+            .reduce((sum, s) => sum + (parseFloat(s.valor_cliente) - parseFloat(s.custo_profissional)), 0)
+
+          setStats({
+            solicitacoes: countSolic || 0,
+            emAtendimento,
+            fechadas,
+            lucroTotal: Math.round(lucroTotal)
+          })
+        }
+      } catch (err) {
+        console.error('Erro ao carregar dados:', err)
       }
-
-      const { data: solic, count: countSolic } = await query
-
-      setSolicitacoes(solic || [])
-
-      const emAtendimento = (solic || []).filter(s => s.status === 'atendimento').length
-      const fechadas = (solic || []).filter(s => s.status === 'fechado').length
-      const lucroTotal = (solic || [])
-        .filter(s => s.status === 'fechado' && s.valor_cliente && s.custo_profissional)
-        .reduce((sum, s) => sum + (parseFloat(s.valor_cliente) - parseFloat(s.custo_profissional)), 0)
-
-      setStats({
-        solicitacoes: countSolic || 0,
-        emAtendimento,
-        fechadas,
-        lucroTotal: Math.round(lucroTotal)
-      })
     }
 
     carregarDados()
   }, [autenticado, filtroStatus])
 
   async function atualizarStatus(id, novoStatus) {
-    await supabase.from('solicitacoes_servico').update({ status: novoStatus }).eq('id', id)
-    setSolicitacoes(solicitacoes.map(s => s.id === id ? {...s, status: novoStatus} : s))
+    const { error } = await supabase.from('solicitacoes_servico').update({ status: novoStatus }).eq('id', id)
+    if (!error) {
+      setSolicitacoes(solicitacoes.map(s => s.id === id ? {...s, status: novoStatus} : s))
+    }
   }
 
   async function salvarValores(id) {
-    await supabase.from('solicitacoes_servico').update({
+    const { error } = await supabase.from('solicitacoes_servico').update({
       custo_profissional: custoProf ? parseFloat(custoProf) : null,
       valor_cliente: valorCliente ? parseFloat(valorCliente) : null
     }).eq('id', id)
-    setSolicitacoes(solicitacoes.map(s => s.id === id ? {
-      ...s,
-      custo_profissional: custoProf ? parseFloat(custoProf) : null,
-      valor_cliente: valorCliente ? parseFloat(valorCliente) : null
-    } : s))
-    setEditandoId(null)
-    setCustoProf('')
-    setValorCliente('')
+
+    if (!error) {
+      setSolicitacoes(solicitacoes.map(s => s.id === id ? {
+        ...s,
+        custo_profissional: custoProf ? parseFloat(custoProf) : null,
+        valor_cliente: valorCliente ? parseFloat(valorCliente) : null
+      } : s))
+      setEditandoId(null)
+      setCustoProf('')
+      setValorCliente('')
+    }
   }
 
   if (!autenticado) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#1a1a1a] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-[#0f172a] to-[#1a1a2e] flex items-center justify-center p-4">
         <div className="bg-white/5 border border-white/10 rounded-3xl p-8 max-w-sm w-full">
           <h1 className="text-3xl font-bold text-white mb-2">Admin</h1>
-          <p className="text-white/50 mb-6">ResolveAi</p>
+          <p className="text-white/50 mb-6">Chama9</p>
           <input
             type="password"
             value={senha}
             onChange={e => setSenha(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && verificarSenha()}
             placeholder="Senha"
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-[#FF5C00] mb-4"
+            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-[#22c55e] mb-4"
           />
           <button
             onClick={verificarSenha}
-            className="w-full rounded-full bg-[#FF5C00] py-3 text-white font-semibold hover:bg-[#e05200] transition"
+            className="w-full rounded-full bg-[#22c55e] py-3 text-black font-bold hover:bg-[#16a34a] transition"
           >
             Entrar
           </button>
@@ -122,11 +136,11 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#1a1a1a] p-6">
+    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] to-[#1a1a2e] p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-white">Admin Panel</h1>
+            <h1 className="text-4xl font-bold text-white">Admin Panel - Chama9</h1>
             <a href="/" className="text-white/50 hover:text-white transition text-sm mt-2 inline-block">
               ← Voltar para home
             </a>
@@ -142,7 +156,7 @@ export default function Admin() {
           <select
             value={filtroStatus}
             onChange={e => setFiltroStatus(e.target.value)}
-            className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-[#FF5C00]"
+            className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-[#22c55e]"
           >
             <option value="todos">Todas</option>
             <option value="novo">🆕 Novas</option>
@@ -159,7 +173,7 @@ export default function Admin() {
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <h3 className="font-semibold text-white">{sol.nome_cliente}</h3>
-                    <p className="text-xs text-[#FF5C00]">
+                    <p className="text-xs text-[#22c55e]">
                       {sol.profissionais?.nome} • {sol.profissionais?.categoria}
                     </p>
                   </div>
@@ -188,9 +202,9 @@ export default function Admin() {
                     <p className="text-white/50">Valor Cliente</p>
                     <p className="text-white font-semibold">{sol.valor_cliente ? `R$ ${sol.valor_cliente}` : '-'}</p>
                   </div>
-                  <div className="bg-[#00C896]/10 rounded-lg p-2">
+                  <div className="bg-[#22c55e]/10 rounded-lg p-2">
                     <p className="text-white/50">Lucro</p>
-                    <p className="text-[#00C896] font-semibold">
+                    <p className="text-[#22c55e] font-semibold">
                       {sol.custo_profissional && sol.valor_cliente ? `R$ ${Math.round(sol.valor_cliente - sol.custo_profissional)}` : '-'}
                     </p>
                   </div>
@@ -203,14 +217,14 @@ export default function Admin() {
                       placeholder="Custo Prof"
                       value={custoProf}
                       onChange={e => setCustoProf(e.target.value)}
-                      className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-[#FF5C00]"
+                      className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-[#22c55e]"
                     />
                     <input
                       type="number"
                       placeholder="Valor Cliente"
                       value={valorCliente}
                       onChange={e => setValorCliente(e.target.value)}
-                      className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-[#FF5C00]"
+                      className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-[#22c55e]"
                     />
                   </div>
                 )}
@@ -252,7 +266,7 @@ export default function Admin() {
                         setCustoProf(sol.custo_profissional || '')
                         setValorCliente(sol.valor_cliente || '')
                       }}
-                      className="bg-[#FF5C00]/20 text-[#FF5C00] px-3 py-2 rounded-lg text-xs font-semibold hover:bg-[#FF5C00]/30 transition"
+                      className="bg-[#22c55e]/20 text-[#22c55e] px-3 py-2 rounded-lg text-xs font-semibold hover:bg-[#22c55e]/30 transition"
                     >
                       ✏️ Valores
                     </button>
@@ -260,7 +274,7 @@ export default function Admin() {
                   <select
                     value={sol.status}
                     onChange={e => atualizarStatus(sol.id, e.target.value)}
-                    className="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-white text-xs focus:outline-none focus:border-[#FF5C00]"
+                    className="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-white text-xs focus:outline-none focus:border-[#22c55e]"
                   >
                     <option value="novo">Novo</option>
                     <option value="atendimento">Atendimento</option>
@@ -273,7 +287,7 @@ export default function Admin() {
           ) : (
             <div className="text-center py-12 text-white/40">
               <p className="text-4xl mb-2">📝</p>
-              <p>Nenhuma solicitação</p>
+              <p>Nenhuma solicitação {filtroStatus !== 'todos' ? filtroStatus : ''}</p>
             </div>
           )}
         </div>
