@@ -22,18 +22,10 @@ function HomePage() {
       <PWAInstallPrompt />
 
       <header className="sticky top-0 z-40 border-b border-white/10 bg-black/40 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-3 hover:opacity-80 transition group">
-            <img 
-              src="/logo.png" 
-              alt="Chama9" 
-              className="h-8 sm:h-10 w-auto object-contain group-hover:scale-110 transition"
-              loading="lazy"
-            />
-            <div className="hidden sm:block">
-              <p className="text-white font-bold text-sm leading-tight">Chama9</p>
-              <p className="text-white/40 text-xs leading-tight">Castro - PR</p>
-            </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+          <a href="/" className="flex flex-col hover:opacity-80 transition">
+            <span className="text-xl sm:text-2xl font-black bg-gradient-to-r from-[#f97316] via-orange-400 to-[#22c55e] bg-clip-text text-transparent">Chama9</span>
+            <span className="text-xs text-white/40">Castro - PR</span>
           </a>
           
           <nav className="flex items-center gap-2 sm:gap-4">
