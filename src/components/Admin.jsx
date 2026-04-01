@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../utils/supabase.js'
 import LogoUploadAdmin from './LogoUploadAdmin'
+import FaviconUploadAdmin from './FaviconUploadAdmin'
 
 function DashboardStats({ stats }) {
   return (
@@ -152,10 +153,10 @@ export default function Admin() {
         </div>
 
         {/* Abas */}
-        <div className="flex gap-2 mb-6 border-b border-white/10">
+        <div className="flex gap-2 mb-6 border-b border-white/10 overflow-x-auto">
           <button
             onClick={() => setActiveTab('solicitacoes')}
-            className={`px-4 py-3 font-semibold border-b-2 transition ${
+            className={`px-4 py-3 font-semibold border-b-2 transition whitespace-nowrap ${
               activeTab === 'solicitacoes'
                 ? 'border-[#22c55e] text-[#22c55e]'
                 : 'border-transparent text-white/50 hover:text-white'
@@ -165,13 +166,23 @@ export default function Admin() {
           </button>
           <button
             onClick={() => setActiveTab('logo')}
-            className={`px-4 py-3 font-semibold border-b-2 transition ${
+            className={`px-4 py-3 font-semibold border-b-2 transition whitespace-nowrap ${
               activeTab === 'logo'
                 ? 'border-[#22c55e] text-[#22c55e]'
                 : 'border-transparent text-white/50 hover:text-white'
             }`}
           >
-            🎨 Logo & Favicon
+            🖼️ Logo
+          </button>
+          <button
+            onClick={() => setActiveTab('favicon')}
+            className={`px-4 py-3 font-semibold border-b-2 transition whitespace-nowrap ${
+              activeTab === 'favicon'
+                ? 'border-[#22c55e] text-[#22c55e]'
+                : 'border-transparent text-white/50 hover:text-white'
+            }`}
+          >
+            🔰 Favicon
           </button>
         </div>
 
@@ -179,6 +190,13 @@ export default function Admin() {
         {activeTab === 'logo' && (
           <div>
             <LogoUploadAdmin />
+          </div>
+        )}
+
+        {/* Aba de Favicon */}
+        {activeTab === 'favicon' && (
+          <div>
+            <FaviconUploadAdmin />
           </div>
         )}
 
