@@ -26,8 +26,9 @@ export default function CadastroPage() {
   const [loading, setLoading] = useState(false)
   const [erro, setErro] = useState('')
   const [cadastroConcluido, setCadastroConcluido] = useState(false)
+  const [previewImagem, setPreviewImagem] = useState(null)
+  const [imagemUpload, setImagemUpload] = useState(null)
   
-  // Estado local apenas em memória - não persiste
   const [formData, setFormData] = useState({
     nome: '',
     categoria: '',
@@ -36,12 +37,40 @@ export default function CadastroPage() {
     preco_min: '',
     preco_max: '',
     telefone: '',
-    email: ''
+    email: '',
+    imagem_url: ''
   })
 
   function handleChange(e) {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+    setErro('')
+  }
+
+  function handleImagemUpload(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validar tipo
+    if (!file.type.startsWith('image/')) {
+      setErro('Apenas arquivos de imagem são permitidos')
+      return
+    }
+
+    // Validar tamanho (máx 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setErro('Imagem não pode exceder 5MB')
+      return
+    }
+
+    setImagemUpload(file)
+
+    // Preview
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      setPreviewImagem(e.target?.result)
+    }
+    reader.readAsDataURL(file)
     setErro('')
   }
 
@@ -66,6 +95,17 @@ export default function CadastroPage() {
       setErro('Telefone é obrigatório')
       return false
     }
+    
+    // Se tiver link de imagem, validar URL
+    if (formData.imagem_url.trim()) {
+      try {
+        new URL(formData.imagem_url)
+      } catch {
+        setErro('Link de imagem inválido')
+        return false
+      }
+    }
+    
     return true
   }
 
@@ -76,8 +116,31 @@ export default function CadastroPage() {
     setErro('')
 
     try {
-      // Insere direto no banco, sem salvar em nenhum lugar localmente
-      const { data, error } = await supabase
+      let imagemFinal = formData.imagem_url.trim() || null
+
+      // Upload de imagem se fornecido
+      if (imagemUpload) {
+        const nomeArquivo = `perfil-${Date.now()}-${Math.random().toString(36).substring(7)}`
+        
+        const { error: uploadError } = await supabase.storage
+          .from('profissionais')
+          .upload(nomeArquivo, imagemUpload)
+
+        if (uploadError) {
+          setErro('Erro ao enviar imagem')
+          setLoading(false)
+          return
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('profissionais')
+          .getPublicUrl(nomeArquivo)
+
+        imagemFinal = publicUrl
+      }
+
+      // Insere profissional
+      const { error } = await supabase
         .from('profissionais')
         .insert({
           nome: formData.nome.trim(),
@@ -88,12 +151,12 @@ export default function CadastroPage() {
           preco_max: formData.preco_max ? parseInt(formData.preco_max) : null,
           telefone: formData.telefone.trim(),
           email: formData.email.trim() || null,
+          imagem_url: imagemFinal,
           avaliacao: 0,
           total_avaliacoes: 0,
           ativo: true,
           status: 'ativo'
         })
-        .select()
 
       if (error) {
         setErro(`Erro ao cadastrar: ${error.message}`)
@@ -104,7 +167,6 @@ export default function CadastroPage() {
       setCadastroConcluido(true)
       
       setTimeout(() => {
-        // Limpa estado em memória
         setFormData({
           nome: '',
           categoria: '',
@@ -113,8 +175,11 @@ export default function CadastroPage() {
           preco_min: '',
           preco_max: '',
           telefone: '',
-          email: ''
+          email: '',
+          imagem_url: ''
         })
+        setImagemUpload(null)
+        setPreviewImagem(null)
         navigate('/')
       }, 3000)
     } catch (err) {
@@ -214,6 +279,38 @@ export default function CadastroPage() {
               />
             </div>
 
+            {/* Upload de imagem */}
+            <div>
+              <label className="block text-white font-semibold mb-2">📸 Sua Foto (Opcional)</label>
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label className="block bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-center cursor-pointer hover:bg-white/10 transition">
+                    <span className="text-white/70 text-sm">Upload de Imagem</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImagemUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              </div>
+              {previewImagem && (
+                <div className="mt-3 relative">
+                  <img src={previewImagem} alt="Preview" className="w-full h-48 object-cover rounded-lg" />
+                  <button
+                    onClick={() => {
+                      setPreviewImagem(null)
+                      setImagemUpload(null)
+                    }}
+                    className="absolute top-2 right-2 bg-red-500/80 hover:bg-red-600 text-white p-2 rounded-lg transition"
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
+            </div>
+
             <button
               onClick={() => {
                 if (validarStep1()) {
@@ -277,6 +374,19 @@ export default function CadastroPage() {
                 placeholder="seu@email.com"
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-[#FF5C00]"
               />
+            </div>
+
+            <div>
+              <label className="block text-white font-semibold mb-2">Link de Imagem (Opcional)</label>
+              <input
+                type="url"
+                name="imagem_url"
+                value={formData.imagem_url}
+                onChange={handleChange}
+                placeholder="https://exemplo.com/imagem.jpg"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-[#FF5C00]"
+              />
+              <p className="text-xs text-white/40 mt-1">Deixe em branco se usou upload. Proporção ideal: 4:3 (800x600 ou 1200x900)</p>
             </div>
 
             <div className="flex gap-3">
