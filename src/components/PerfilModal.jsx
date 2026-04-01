@@ -6,6 +6,8 @@ export default function PerfilModal({ profissional, onFechar }) {
   const [avaliacoes, setAvaliacoes] = useState([])
   const [loading, setLoading] = useState(true)
   const [modalSolicitacao, setModalSolicitacao] = useState(false)
+  const [imagemCarregada, setImagemCarregada] = useState(false)
+  const [erroImagem, setErroImagem] = useState(false)
 
   useEffect(() => {
     async function carregarAvaliacoes() {
@@ -28,17 +30,35 @@ export default function PerfilModal({ profissional, onFechar }) {
     <>
       <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-4">
         <div className="w-full max-w-lg bg-[#1A1A1A] rounded-3xl border border-white/10 overflow-hidden max-h-[90vh] overflow-y-auto">
-          {/* Header com imagem */}
-          <div className="relative h-48 bg-gradient-to-br from-white/10 to-white/5">
-            {profissional.profissional_imagens?.length > 0 ? (
-              <img
-                src={profissional.profissional_imagens[0].url}
-                alt={profissional.nome}
-                className="w-full h-full object-cover"
-              />
+          {/* Header com imagem 4:3 */}
+          <div className="relative w-full aspect-video bg-gradient-to-br from-white/10 to-white/5">
+            {profissional.imagem_url && !erroImagem ? (
+              <>
+                {/* Skeleton loader */}
+                {!imagemCarregada && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-white/20 to-white/10 animate-pulse" />
+                )}
+                
+                {/* Imagem */}
+                <img
+                  src={profissional.imagem_url}
+                  alt={profissional.nome}
+                  loading="lazy"
+                  onLoad={() => setImagemCarregada(true)}
+                  onError={() => setErroImagem(true)}
+                  className={`w-full h-full object-cover transition-opacity duration-300 ${
+                    imagemCarregada ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+              </>
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-6xl opacity-20">👷</div>
+              /* Fallback */
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="text-6xl opacity-20">👷</div>
+              </div>
             )}
+            
+            {/* Botão fechar */}
             <button
               onClick={onFechar}
               className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 flex items-center justify-center transition"
@@ -84,7 +104,7 @@ export default function PerfilModal({ profissional, onFechar }) {
               </div>
             )}
 
-            {/* Preço - Oculta o valor real, mostra apenas "a partir de" */}
+            {/* Preço */}
             <div className="mb-6 pb-6 border-b border-white/10 bg-[#00C896]/10 rounded-xl p-4">
               <p className="text-white/60 text-sm mb-1">Valores</p>
               <p className="text-2xl font-bold text-[#00C896]">
