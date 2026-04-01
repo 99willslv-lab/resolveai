@@ -28,10 +28,7 @@ export default function Footer() {
                   loading="lazy"
                 />
               )}
-              <div>
-                <h3 className="text-white font-black text-lg">Chama9</h3>
-                <p className="text-white/40 text-xs">Castro - PR</p>
-              </div>
+              <h3 className="text-white font-black text-lg">Chama9</h3>
             </div>
             <p className="text-white/60 text-sm mb-4">
               Plataforma de intermediação de serviços locais. Conectando você aos melhores profissionais com rapidez, segurança e sem complicação.
@@ -42,9 +39,9 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-bold mb-4">Serviços</h4>
             <ul className="space-y-2 text-sm text-white/60">
-              <li><a href="#" className="hover:text-[#22c55e] transition">Eletricista em Castro</a></li>
-              <li><a href="#" className="hover:text-[#22c55e] transition">Encanador em Castro</a></li>
-              <li><a href="#" className="hover:text-[#22c55e] transition">Pintor em Castro</a></li>
+              <li><a href="#" className="hover:text-[#22c55e] transition">Eletricista</a></li>
+              <li><a href="#" className="hover:text-[#22c55e] transition">Encanador</a></li>
+              <li><a href="#" className="hover:text-[#22c55e] transition">Pintor</a></li>
               <li><a href="#" className="hover:text-[#22c55e] transition">Marceneiro</a></li>
               <li><a href="#" className="hover:text-[#22c55e] transition">Ar-condicionado</a></li>
             </ul>
@@ -103,7 +100,7 @@ export default function Footer() {
 
         {/* Legal */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/40">
-          <p>© 2024 Chama9 - Serviços locais em Castro - PR. Todos os direitos reservados.</p>
+          <p>© 2024 Chama9 - Serviços locais. Todos os direitos reservados.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-[#22c55e] transition">Termos de uso</a>
             <a href="#" className="hover:text-[#22c55e] transition">Privacidade</a>
