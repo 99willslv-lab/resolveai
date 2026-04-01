@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from './utils/supabase.js'
 import Cards from './components/Cards'
 import PerfilModal from './components/PerfilModal'
@@ -89,13 +89,11 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Seção de categorias premium */}
       <CategoriasPremium 
         filtroCategoria={filtroCategoria}
         onSelectCategoria={setFiltroCategoria}
       />
 
-      {/* Cards de profissionais */}
       <div data-buscar>
         <Cards
           filtroCategoria={filtroCategoria}
@@ -112,9 +110,36 @@ function HomePage() {
   )
 }
 
+// Componente que monitora mudanças de rota
+function RouteMonitor() {
+  const location = useLocation()
+
+  useEffect(() => {
+    // Salva a rota atual (apenas /admin e /cadastro, não salva /)
+    if (location.pathname === '/admin' || location.pathname === '/cadastro') {
+      sessionStorage.setItem('lastRoute', location.pathname)
+    }
+  }, [location])
+
+  return null
+}
+
 export default function App() {
+  const [initialRoute, setInitialRoute] = useState('/')
+
+  useEffect(() => {
+    // Ao carregar, verifica se havia uma rota guardada
+    const lastRoute = sessionStorage.getItem('lastRoute')
+    if (lastRoute) {
+      setInitialRoute(lastRoute)
+      // Limpa após usar (próximo F5 começa do zero se não entrar em /admin ou /cadastro)
+      sessionStorage.removeItem('lastRoute')
+    }
+  }, [])
+
   return (
     <Router>
+      <RouteMonitor />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/admin" element={<Admin />} />
