@@ -7,6 +7,7 @@ import CategoriasPremium from './components/CategoriasPremium'
 import Admin from './components/Admin'
 import CadastroPage from './components/CadastroPage'
 import Footer from './components/Footer'
+import PWAInstallPrompt from './components/PWAInstallPrompt'
 
 function HomePage() {
   const [filtroCategoria, setFiltroCategoria] = useState('')
@@ -18,6 +19,9 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-slate-900 to-[#0f172a]">
+      {/* Notificação PWA */}
+      <PWAInstallPrompt />
+
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-white/10 bg-black/40 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
@@ -118,6 +122,15 @@ function RouteMonitor() {
 }
 
 export default function App() {
+  useEffect(() => {
+    // Registrar Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(err => {
+        console.log('SW registration failed:', err)
+      })
+    }
+  }, [])
+
   return (
     <Router>
       <RouteMonitor />
