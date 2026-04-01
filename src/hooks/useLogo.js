@@ -2,7 +2,15 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../utils/supabase'
 
 export function useLogo() {
-  const [logoUrl, setLogoUrl] = useState('/logo.png') // fallback padrão
+  const [logoUrl, setLogoUrl] = useState(() => {
+    // Tentar carregar do localStorage primeiro
+    try {
+      const cached = localStorage.getItem('chama9_logo_url')
+      return cached || '/logo.png'
+    } catch {
+      return '/logo.png'
+    }
+  })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -17,21 +25,21 @@ export function useLogo() {
         .eq('chave', 'logo_url')
         .single()
 
-      if (error) {
-        console.log('Logo não encontrado, usando default')
-        setLoading(false)
-        return
-      }
+      if (!error && data?.valor) {
+        // Salvar no localStorage
+        try {
+          localStorage.setItem('chama9_logo_url', data.valor)
+        } catch (e) {
+          console.log('localStorage não disponível')
+        }
 
-      if (data?.valor) {
         setLogoUrl(data.valor)
-        // Atualizar favicon também
         atualizarFavicon(data.valor)
       }
       
       setLoading(false)
     } catch (err) {
-      console.log('Erro ao carregar logo:', err.message)
+      console.log('Logo: usando fallback padrão')
       setLoading(false)
     }
   }
@@ -44,11 +52,12 @@ export function useLogo() {
       } else {
         link = document.createElement('link')
         link.rel = 'icon'
+        link.type = 'image/png'
         link.href = url
         document.head.appendChild(link)
       }
     } catch (err) {
-      console.log('Erro ao atualizar favicon:', err.message)
+      console.log('Favicon update falhou')
     }
   }
 
