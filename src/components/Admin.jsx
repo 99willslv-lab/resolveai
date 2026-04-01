@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { supabase } from '../utils/supabase.js'
 import { supabase } from './utils/supabase.js'
 import Cards from './components/Cards'
 import PerfilModal from './components/PerfilModal'
