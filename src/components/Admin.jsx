@@ -28,10 +28,9 @@ export default function Admin() {
   const [senha, setSenha] = useState('')
   const [autenticado, setAutenticado] = useState(false)
   const [solicitacoes, setSolicitacoes] = useState([])
-  const [tab, setTab] = useState('solicitacoes')
   const [stats, setStats] = useState({ solicitacoes: 0, emAtendimento: 0, fechadas: 0, lucroTotal: 0 })
   const [filtroStatus, setFiltroStatus] = useState('todos')
-  const [editandoSolicitacao, setEditandoSolicitacao] = useState(null)
+  const [editandoId, setEditandoId] = useState(null)
   const [custoProf, setCustoProf] = useState('')
   const [valorCliente, setValorCliente] = useState('')
 
@@ -47,16 +46,16 @@ export default function Admin() {
     if (!autenticado) return
 
     async function carregarDados() {
-      let querySolic = supabase
+      let query = supabase
         .from('solicitacoes_servico')
         .select('*, profissionais(nome, categoria)', { count: 'exact' })
         .order('data_criacao', { ascending: false })
 
       if (filtroStatus !== 'todos') {
-        querySolic = querySolic.eq('status', filtroStatus)
+        query = query.eq('status', filtroStatus)
       }
 
-      const { data: solic, count: countSolic } = await querySolic
+      const { data: solic, count: countSolic } = await query
 
       setSolicitacoes(solic || [])
 
@@ -77,15 +76,22 @@ export default function Admin() {
     carregarDados()
   }, [autenticado, filtroStatus])
 
-  async function atualizarSolicitacao(id, novoStatus, custo = null, valor = null) {
-    const updates = { status: novoStatus }
-    if (custo !== null) updates.custo_profissional = parseFloat(custo)
-    if (valor !== null) updates.valor_cliente = parseFloat(valor)
+  async function atualizarStatus(id, novoStatus) {
+    await supabase.from('solicitacoes_servico').update({ status: novoStatus }).eq('id', id)
+    setSolicitacoes(solicitacoes.map(s => s.id === id ? {...s, status: novoStatus} : s))
+  }
 
-    await supabase.from('solicitacoes_servico').update(updates).eq('id', id)
-
-    setSolicitacoes(solicitacoes.map(s => s.id === id ? {...s, ...updates} : s))
-    setEditandoSolicitacao(null)
+  async function salvarValores(id) {
+    await supabase.from('solicitacoes_servico').update({
+      custo_profissional: custoProf ? parseFloat(custoProf) : null,
+      valor_cliente: valorCliente ? parseFloat(valorCliente) : null
+    }).eq('id', id)
+    setSolicitacoes(solicitacoes.map(s => s.id === id ? {
+      ...s,
+      custo_profissional: custoProf ? parseFloat(custoProf) : null,
+      valor_cliente: valorCliente ? parseFloat(valorCliente) : null
+    } : s))
+    setEditandoId(null)
     setCustoProf('')
     setValorCliente('')
   }
@@ -96,8 +102,20 @@ export default function Admin() {
         <div className="bg-white/5 border border-white/10 rounded-3xl p-8 max-w-sm w-full">
           <h1 className="text-3xl font-bold text-white mb-2">Admin</h1>
           <p className="text-white/50 mb-6">ResolveAi</p>
-          <input type="password" value={senha} onChange={e => setSenha(e.target.value)} onKeyDown={e => e.key === 'Enter' && verificarSenha()} placeholder="Senha" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-[#FF5C00] mb-4" />
-          <button onClick={verificarSenha} className="w-full rounded-full bg-[#FF5C00] py-3 text-white font-semibold hover:bg-[#e05200] transition">Entrar</button>
+          <input
+            type="password"
+            value={senha}
+            onChange={e => setSenha(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && verificarSenha()}
+            placeholder="Senha"
+            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-[#FF5C00] mb-4"
+          />
+          <button
+            onClick={verificarSenha}
+            className="w-full rounded-full bg-[#FF5C00] py-3 text-white font-semibold hover:bg-[#e05200] transition"
+          >
+            Entrar
+          </button>
         </div>
       </div>
     )
@@ -109,16 +127,20 @@ export default function Admin() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-4xl font-bold text-white">Admin Panel</h1>
-            <a href="/" className="text-white/50 hover:text-white transition text-sm mt-2 inline-block">← Voltar para home</a>
+            <a href="/" className="text-white/50 hover:text-white transition text-sm mt-2 inline-block">
+              ← Voltar para home
+            </a>
           </div>
-          <button onClick={() => { setAutenticado(false); setSenha('') }} className="text-white/50 hover:text-white transition">Sair</button>
+          <button onClick={() => { setAutenticado(false); setSenha('') }} className="text-white/50 hover:text-white transition">
+            Sair
+          </button>
         </div>
 
         <DashboardStats stats={stats} />
 
-        <div className="mb-6 flex gap-3">
-          <select 
-            value={filtroStatus} 
+        <div className="mb-6">
+          <select
+            value={filtroStatus}
             onChange={e => setFiltroStatus(e.target.value)}
             className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-[#FF5C00]"
           >
@@ -133,11 +155,13 @@ export default function Admin() {
         <div className="space-y-3">
           {solicitacoes.length > 0 ? (
             solicitacoes.map(sol => (
-              <div key={sol.id} className="bg-white/5 border border-white/10 rounded-2xl p-4 hover:border-[#FF5C00]/40 transition">
+              <div key={sol.id} className="bg-white/5 border border-white/10 rounded-2xl p-4">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <h3 className="font-semibold text-white">{sol.nome_cliente}</h3>
-                    <p className="text-xs text-[#FF5C00]">{sol.profissionais?.nome} • {sol.profissionais?.categoria}</p>
+                    <p className="text-xs text-[#FF5C00]">
+                      {sol.profissionais?.nome} • {sol.profissionais?.categoria}
+                    </p>
                   </div>
                   <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
                     sol.status === 'novo' ? 'bg-yellow-500/20 text-yellow-300' :
@@ -149,37 +173,30 @@ export default function Admin() {
                   </span>
                 </div>
 
-                <p className="text-white/70 text-sm mb-3 line-clamp-2">{sol.descricao_servico}</p>
+                <p className="text-white/70 text-sm mb-3">{sol.descricao_servico}</p>
 
-                <div className="flex items-center justify-between mb-3 text-xs text-white/50">
-                  <span>📱 {sol.telefone_cliente}</span>
-                  <span>📅 {new Date(sol.data_criacao).toLocaleDateString('pt-BR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                <div className="text-xs text-white/50 mb-3">
+                  📱 {sol.telefone_cliente} • 📅 {new Date(sol.data_criacao).toLocaleDateString('pt-BR')}
                 </div>
 
                 <div className="mb-3 grid grid-cols-3 gap-2 text-xs">
                   <div className="bg-white/5 rounded-lg p-2">
-                    <p className="text-white/50 mb-1">Custo Prof</p>
-                    <p className="text-white font-semibold">
-                      {sol.custo_profissional ? `R$ ${sol.custo_profissional}` : '-'}
-                    </p>
+                    <p className="text-white/50">Custo Prof</p>
+                    <p className="text-white font-semibold">{sol.custo_profissional ? `R$ ${sol.custo_profissional}` : '-'}</p>
                   </div>
                   <div className="bg-white/5 rounded-lg p-2">
-                    <p className="text-white/50 mb-1">Valor Cliente</p>
-                    <p className="text-white font-semibold">
-                      {sol.valor_cliente ? `R$ ${sol.valor_cliente}` : '-'}
-                    </p>
+                    <p className="text-white/50">Valor Cliente</p>
+                    <p className="text-white font-semibold">{sol.valor_cliente ? `R$ ${sol.valor_cliente}` : '-'}</p>
                   </div>
                   <div className="bg-[#00C896]/10 rounded-lg p-2">
-                    <p className="text-white/50 mb-1">Lucro</p>
+                    <p className="text-white/50">Lucro</p>
                     <p className="text-[#00C896] font-semibold">
-                      {sol.custo_profissional && sol.valor_cliente 
-                        ? `R$ ${Math.round(sol.valor_cliente - sol.custo_profissional)}`
-                        : '-'}
+                      {sol.custo_profissional && sol.valor_cliente ? `R$ ${Math.round(sol.valor_cliente - sol.custo_profissional)}` : '-'}
                     </p>
                   </div>
                 </div>
 
-                {editandoSolicitacao?.id === sol.id ? (
+                {editandoId === sol.id && (
                   <div className="mb-3 grid grid-cols-2 gap-2">
                     <input
                       type="number"
@@ -196,55 +213,53 @@ export default function Admin() {
                       className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-xs focus:outline-none focus:border-[#FF5C00]"
                     />
                   </div>
-                ) : null}
+                )}
 
                 <div className="flex gap-2 flex-wrap">
                   <button
                     onClick={() => navigator.clipboard.writeText(sol.telefone_cliente)}
-                    className="flex-1 min-w-[100px] bg-white/10 text-white py-2 rounded-lg text-xs font-semibold hover:bg-white/20 transition"
+                    className="bg-white/10 text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-white/20 transition"
                   >
                     📋 Copiar
                   </button>
-                  
+                  <a
                     href={`https://wa.me/${sol.telefone_cliente.replace(/\D/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 min-w-[100px] bg-[#25D366] text-white py-2 rounded-lg text-xs font-semibold hover:bg-[#20BA5C] transition text-center"
+                    className="bg-[#25D366] text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-[#20BA5C] transition"
                   >
                     💬 Chat
                   </a>
-                  <button
-                    onClick={() => {
-                      setEditandoSolicitacao(sol)
-                      setCustoProf(sol.custo_profissional || '')
-                      setValorCliente(sol.valor_cliente || '')
-                    }}
-                    className="flex-1 min-w-[100px] bg-[#FF5C00]/20 text-[#FF5C00] py-2 rounded-lg text-xs font-semibold hover:bg-[#FF5C00]/30 transition"
-                  >
-                    ✏️ Valores
-                  </button>
-                  {editandoSolicitacao?.id === sol.id && (
+                  {editandoId === sol.id ? (
                     <>
                       <button
-                        onClick={() => atualizarSolicitacao(sol.id, sol.status, custoProf, valorCliente)}
-                        className="flex-1 min-w-[100px] bg-green-500/20 text-green-300 py-2 rounded-lg text-xs font-semibold hover:bg-green-500/30 transition"
+                        onClick={() => salvarValores(sol.id)}
+                        className="bg-green-500/20 text-green-300 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-green-500/30 transition"
                       >
                         ✅ Salvar
                       </button>
                       <button
-                        onClick={() => setEditandoSolicitacao(null)}
-                        className="flex-1 min-w-[100px] bg-white/10 text-white py-2 rounded-lg text-xs font-semibold hover:bg-white/20 transition"
+                        onClick={() => setEditandoId(null)}
+                        className="bg-white/10 text-white px-3 py-2 rounded-lg text-xs font-semibold hover:bg-white/20 transition"
                       >
                         ❌ Cancelar
                       </button>
                     </>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setEditandoId(sol.id)
+                        setCustoProf(sol.custo_profissional || '')
+                        setValorCliente(sol.valor_cliente || '')
+                      }}
+                      className="bg-[#FF5C00]/20 text-[#FF5C00] px-3 py-2 rounded-lg text-xs font-semibold hover:bg-[#FF5C00]/30 transition"
+                    >
+                      ✏️ Valores
+                    </button>
                   )}
                   <select
                     value={sol.status}
-                    onChange={async (e) => {
-                      await supabase.from('solicitacoes_servico').update({ status: e.target.value }).eq('id', sol.id)
-                      setSolicitacoes(solicitacoes.map(s => s.id === sol.id ? {...s, status: e.target.value} : s))
-                    }}
+                    onChange={e => atualizarStatus(sol.id, e.target.value)}
                     className="bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-white text-xs focus:outline-none focus:border-[#FF5C00]"
                   >
                     <option value="novo">Novo</option>
