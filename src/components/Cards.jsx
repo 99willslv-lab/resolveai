@@ -75,7 +75,7 @@ function Carrossel({ imagens, nome }) {
   )
 }
 
-export default function Cards({ filtroCategoria, onMensagem, onAvaliar, onVerPerfil }) {
+export default function Cards({ filtroCategoria, onVerPerfil }) {
   const [profissionais, setProfissionais] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -148,35 +148,19 @@ export default function Cards({ filtroCategoria, onMensagem, onAvaliar, onVerPer
                 </p>
               )}
 
-              <div className="mb-4 flex items-center gap-2 text-xs text-[#00C896] font-medium">
-                <span>⏱️ Responde rápido</span>
-              </div>
-
               <div className="mb-4 py-3 px-3 rounded-xl bg-[#00C896]/10 border border-[#00C896]/20">
                 <p className="text-xs text-white/60 mb-1">A partir de</p>
                 <p className="text-xl font-bold text-[#00C896]">
-                  {prof.preco_min && prof.preco_max
-                    ? `R$ ${prof.preco_min}–${prof.preco_max}/h`
-                    : prof.preco_min
-                    ? `R$ ${prof.preco_min}/h`
-                    : 'Consulte'}
+                  R$ {prof.preco_min || 'Consulte'}
                 </p>
               </div>
 
-              <div className="flex gap-2 mt-auto" onClick={e => e.stopPropagation()}>
-                <button
-                  onClick={() => onMensagem(prof)}
-                  className="flex-1 rounded-xl bg-[#FF5C00] text-white py-2.5 text-sm font-semibold hover:bg-[#e05200] transition-all duration-200 hover:shadow-lg hover:shadow-[#FF5C00]/30"
-                >
-                  💬 Falar agora
-                </button>
-                <button
-                  onClick={() => onAvaliar(prof)}
-                  className="px-4 rounded-xl border border-white/20 text-white text-sm font-semibold hover:bg-white/10 hover:border-white/40 transition-all duration-200"
-                >
-                  ⭐
-                </button>
-              </div>
+              <button
+                className="w-full rounded-xl bg-[#FF5C00] text-white py-2.5 text-sm font-semibold hover:bg-[#e05200] transition-all duration-200 hover:shadow-lg hover:shadow-[#FF5C00]/30 mt-auto"
+                onClick={e => e.stopPropagation()}
+              >
+                📝 Solicitar Serviço
+              </button>
             </div>
           </div>
         ))}
