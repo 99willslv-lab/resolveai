@@ -15,6 +15,7 @@ function HomePage() {
   const [modalAvaliar, setModalAvaliar] = useState(null)
   const [categoriasMensagem, setCatMensagem] = useState({})
 
+  // Estados sempre zerados ao recarregar - sem persistência
   const CATEGORIAS = [
     { nome: 'Encanador', icon: '🔧' },
     { nome: 'Eletricista', icon: '⚡' },
