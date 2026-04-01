@@ -19,16 +19,15 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5 mb-12">
           {/* Brand com logo dinâmico */}
           <div className="lg:col-span-2">
-            <div className="mb-4 flex items-center gap-2">
+            <div className="mb-4">
               {logoUrl && (
                 <img 
                   src={logoUrl} 
                   alt="Chama9" 
-                  className="h-10 w-auto object-contain"
+                  className="h-12 w-auto object-contain"
                   loading="lazy"
                 />
               )}
-              <h3 className="text-white font-black text-lg">Chama9</h3>
             </div>
             <p className="text-white/60 text-sm mb-4">
               Plataforma de intermediação de serviços locais. Conectando você aos melhores profissionais com rapidez, segurança e sem complicação.
