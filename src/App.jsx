@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { supabase } from './utils/supabase.js'
 import Cards from './components/Cards'
 import PerfilModal from './components/PerfilModal'
@@ -13,7 +13,6 @@ function HomePage() {
   const [profissionalSelecionado, setProf] = useState(null)
 
   useEffect(() => {
-    // SEO Meta tags
     document.title = 'Chama9 – Serviços locais em Castro PR | Encontre profissionais rápido'
     document.querySelector('meta[name="description"]')?.setAttribute('content', 'Encontre profissionais em Castro PR com rapidez e segurança. Solicite serviços como eletricista, encanador, pintor e mais no Chama9.')
     document.querySelector('meta[name="keywords"]')?.setAttribute('content', 'serviços em Castro PR, eletricista Castro, encanador Castro, pintor Castro, profissionais locais, contratar serviços, Chama9')
@@ -23,10 +22,26 @@ function HomePage() {
     <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-slate-900 to-[#0f172a]">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-black/40 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold bg-gradient-to-r from-[#22c55e] to-[#16a34a] bg-clip-text text-transparent">Chama9</span>
-            <span className="text-xs text-white/40 font-semibold">Castro - PR</span>
-          </div>
+          <a href="/" className="flex items-center gap-3 hover:opacity-80 transition">
+            {/* Logo SVG */}
+            <div className="flex items-center gap-2">
+              <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 sm:w-10 sm:h-10">
+                <defs>
+                  <linearGradient id="chama-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style={{stopColor:'#f97316',stopOpacity:1}} />
+                    <stop offset="50%" style={{stopColor:'#fb923c',stopOpacity:1}} />
+                    <stop offset="100%" style={{stopColor:'#22c55e',stopOpacity:1}} />
+                  </linearGradient>
+                </defs>
+                <circle cx="100" cy="100" r="95" fill="url(#chama-gradient)" opacity="0.2"/>
+                <path d="M100 30 C110 50 120 70 120 90 C120 120 110 140 100 150 C90 140 80 120 80 90 C80 70 90 50 100 30 Z" fill="url(#chama-gradient)" />
+                <text x="100" y="110" fontSize="32" fontWeight="bold" fill="#0f172a" textAnchor="middle" dominantBaseline="middle">9</text>
+              </svg>
+              <span className="text-lg sm:text-xl font-black text-white">Chama9</span>
+            </div>
+            <span className="text-xs text-white/40 font-semibold hidden sm:inline">Castro - PR</span>
+          </a>
+          
           <nav className="flex items-center gap-2 sm:gap-4">
             <a href="/admin" className="text-white/50 hover:text-white transition text-xs sm:text-sm px-3 py-2 rounded hover:bg-white/10">
               Admin
@@ -110,12 +125,10 @@ function HomePage() {
   )
 }
 
-// Componente que monitora mudanças de rota
 function RouteMonitor() {
   const location = useLocation()
 
   useEffect(() => {
-    // Salva a rota atual (apenas /admin e /cadastro, não salva /)
     if (location.pathname === '/admin' || location.pathname === '/cadastro') {
       sessionStorage.setItem('lastRoute', location.pathname)
     }
@@ -128,11 +141,9 @@ export default function App() {
   const [initialRoute, setInitialRoute] = useState('/')
 
   useEffect(() => {
-    // Ao carregar, verifica se havia uma rota guardada
     const lastRoute = sessionStorage.getItem('lastRoute')
     if (lastRoute) {
       setInitialRoute(lastRoute)
-      // Limpa após usar (próximo F5 começa do zero se não entrar em /admin ou /cadastro)
       sessionStorage.removeItem('lastRoute')
     }
   }, [])
