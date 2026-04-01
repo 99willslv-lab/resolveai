@@ -50,9 +50,10 @@ export default function Admin() {
 
     async function carregarDados() {
       try {
+        // Query simples SEM aninhamento de relationships
         let query = supabase
           .from('solicitacoes_servico')
-          .select('*, profissionais(nome, categoria)', { count: 'exact' })
+          .select('*', { count: 'exact' })
           .order('data_criacao', { ascending: false })
 
         if (filtroStatus !== 'todos') {
@@ -63,22 +64,42 @@ export default function Admin() {
 
         if (solicitacoesError) {
           console.error('Erro ao carregar solicitações:', solicitacoesError)
-        } else {
-          setSolicitacoes(solic || [])
+          return
+        }
 
-          const emAtendimento = (solic || []).filter(s => s.status === 'atendimento').length
-          const fechadas = (solic || []).filter(s => s.status === 'fechado').length
-          const lucroTotal = (solic || [])
-            .filter(s => s.status === 'fechado' && s.valor_cliente && s.custo_profissional)
-            .reduce((sum, s) => sum + (parseFloat(s.valor_cliente) - parseFloat(s.custo_profissional)), 0)
+        // Buscar dados do profissional separadamente
+        if (solic && solic.length > 0) {
+          const profIds = [...new Set(solic.map(s => s.profissional_id))]
+          const { data: profs } = await supabase
+            .from('profissionais')
+            .select('id, nome, categoria')
+            .in('id', profIds)
 
-          setStats({
-            solicitacoes: countSolic || 0,
-            emAtendimento,
-            fechadas,
-            lucroTotal: Math.round(lucroTotal)
+          // Mapear profissionais para solicitações
+          const profsMap = {}
+          profs?.forEach(p => {
+            profsMap[p.id] = p
+          })
+
+          solic.forEach(s => {
+            s.profissional = profsMap[s.profissional_id]
           })
         }
+
+        setSolicitacoes(solic || [])
+
+        const emAtendimento = (solic || []).filter(s => s.status === 'atendimento').length
+        const fechadas = (solic || []).filter(s => s.status === 'fechado').length
+        const lucroTotal = (solic || [])
+          .filter(s => s.status === 'fechado' && s.valor_cliente && s.custo_profissional)
+          .reduce((sum, s) => sum + (parseFloat(s.valor_cliente) - parseFloat(s.custo_profissional)), 0)
+
+        setStats({
+          solicitacoes: countSolic || 0,
+          emAtendimento,
+          fechadas,
+          lucroTotal: Math.round(lucroTotal)
+        })
       } catch (err) {
         console.error('Erro ao carregar dados:', err)
       }
@@ -227,7 +248,7 @@ export default function Admin() {
                       <div className="flex-1">
                         <h3 className="font-semibold text-white">{sol.nome_cliente}</h3>
                         <p className="text-xs text-[#22c55e]">
-                          {sol.profissionais?.nome} • {sol.profissionais?.categoria}
+                          {sol.profissional?.nome} • {sol.profissional?.categoria}
                         </p>
                       </div>
                       <span className={`text-xs font-semibold px-3 py-1 rounded-full ${
