@@ -19,18 +19,13 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-slate-900 to-[#0f172a]">
-      {/* Notificação PWA */}
       <PWAInstallPrompt />
 
-      {/* Header */}
       <header className="sticky top-0 z-40 border-b border-white/10 bg-black/40 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2 hover:opacity-80 transition">
-            <img src="/logo.png" alt="Chama9" className="h-8 sm:h-10 w-auto object-contain" />
-            <div className="hidden sm:block">
-              <p className="text-white font-bold text-sm leading-none">Chama9</p>
-              <p className="text-white/40 text-xs">Castro - PR</p>
-            </div>
+            <span className="text-2xl font-black bg-gradient-to-r from-[#f97316] to-[#22c55e] bg-clip-text text-transparent">Chama9</span>
+            <span className="text-xs text-white/40">Castro - PR</span>
           </a>
           
           <nav className="flex items-center gap-2 sm:gap-4">
@@ -40,7 +35,6 @@ function HomePage() {
         </div>
       </header>
 
-      {/* Hero */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 text-center">
         <div className="mb-4 inline-block">
           <span className="text-xs sm:text-sm text-[#22c55e] font-bold border border-[#22c55e] rounded-full px-3 sm:px-4 py-1">🚀 Chamou, resolveu.</span>
@@ -86,13 +80,11 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Categorias */}
       <CategoriasPremium 
         filtroCategoria={filtroCategoria}
         onSelectCategoria={setFiltroCategoria}
       />
 
-      {/* Profissionais */}
       <div data-buscar>
         <Cards
           filtroCategoria={filtroCategoria}
@@ -123,7 +115,6 @@ function RouteMonitor() {
 
 export default function App() {
   useEffect(() => {
-    // Registrar Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(err => {
         console.log('SW registration failed:', err)
