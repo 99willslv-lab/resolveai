@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { supabase } from './utils/supabase.js'
 import Cards from './components/Cards'
 import PerfilModal from './components/PerfilModal'
+import CategoriasPremium from './components/CategoriasPremium'
 import Admin from './components/Admin'
 import CadastroPage from './components/CadastroPage'
 import Footer from './components/Footer'
@@ -10,16 +11,6 @@ import Footer from './components/Footer'
 function HomePage() {
   const [filtroCategoria, setFiltroCategoria] = useState('')
   const [profissionalSelecionado, setProf] = useState(null)
-
-  const CATEGORIAS = [
-    { nome: 'Encanador', icon: '🔧' },
-    { nome: 'Eletricista', icon: '⚡' },
-    { nome: 'Pintor', icon: '🎨' },
-    { nome: 'Marceneiro', icon: '🪑' },
-    { nome: 'Ar-condicionado', icon: '❄️' },
-    { nome: 'Pedreiro', icon: '🧱' },
-    { nome: 'Faxineiro', icon: '🧹' },
-  ]
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] via-purple-900/20 to-[#1a1a1a]">
@@ -85,29 +76,19 @@ function HomePage() {
         </div>
       </section>
 
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 mb-12 sm:mb-16" data-buscar>
-        <p className="text-white/50 text-xs sm:text-sm font-medium mb-4">O QUE VOCÊ PRECISA?</p>
-        <div className="grid grid-cols-2 gap-2 sm:gap-3 sm:grid-cols-4 lg:grid-cols-7">
-          {CATEGORIAS.map(cat => (
-            <button
-              key={cat.nome}
-              onClick={() => setFiltroCategoria(filtroCategoria === cat.nome ? '' : cat.nome)}
-              className={`rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium transition ${
-                filtroCategoria === cat.nome
-                  ? 'bg-[#FF5C00] text-white'
-                  : 'bg-white/5 border border-white/10 text-white hover:border-[#FF5C00]/40'
-              }`}
-            >
-              {cat.icon} <span className="hidden sm:inline">{cat.nome}</span>
-            </button>
-          ))}
-        </div>
-      </section>
-
-      <Cards
+      {/* Nova seção de categorias premium */}
+      <CategoriasPremium 
         filtroCategoria={filtroCategoria}
-        onVerPerfil={setProf}
+        onSelectCategoria={setFiltroCategoria}
       />
+
+      {/* Cards de profissionais */}
+      <div data-buscar>
+        <Cards
+          filtroCategoria={filtroCategoria}
+          onVerPerfil={setProf}
+        />
+      </div>
 
       {profissionalSelecionado && (
         <PerfilModal profissional={profissionalSelecionado} onFechar={() => setProf(null)} />
