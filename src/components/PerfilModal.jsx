@@ -3,57 +3,150 @@ import { supabase } from '../utils/supabase.js'
 
 export default function PerfilModal({ profissional, onFechar }) {
   const [avaliacoes, setAvaliacoes] = useState([])
-  const [carregando, setCarregando] = useState(true)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    async function carregar() {
+    async function carregarAvaliacoes() {
+      setLoading(true)
       const { data } = await supabase
         .from('avaliacoes')
         .select('*')
         .eq('profissional_id', profissional.id)
-        .order('created_at', { ascending: false })
+        .order('data_criacao', { ascending: false })
         .limit(5)
+      
       setAvaliacoes(data || [])
-      setCarregando(false)
+      setLoading(false)
     }
-    carregar()
+
+    carregarAvaliacoes()
   }, [profissional.id])
 
-  const whatsappUrl = profissional.telefone ? `https://wa.me/${profissional.telefone.replace(/[^\d]/g, '')}` : null
+  const whatsappUrl = profissional.telefone 
+    ? `https://wa.me/${profissional.telefone.replace(/\D/g, '')}`
+    : null
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="w-full max-w-2xl bg-[#1A1A1A] rounded-3xl border border-white/10 overflow-hidden max-h-[90vh] overflow-y-auto">
-        <div className="relative">
+      <div className="w-full max-w-lg bg-[#1A1A1A] rounded-3xl border border-white/10 overflow-hidden max-h-[90vh] overflow-y-auto">
+        {/* Header com imagem */}
+        <div className="relative h-48 bg-gradient-to-br from-white/10 to-white/5">
           {profissional.profissional_imagens?.length > 0 ? (
-            <img src={profissional.profissional_imagens[0].url} alt={profissional.nome} className="w-full h-64 object-cover" />
+            <img
+              src={profissional.profissional_imagens[0].url}
+              alt={profissional.nome}
+              className="w-full h-full object-cover"
+            />
           ) : (
-            <div className="w-full h-64 bg-gradient-to-r from-[#FF5C00] to-[#e05200] flex items-center justify-center">
-              <span className="text-6xl">👷</span>
+            <div className="w-full h-full flex items-center justify-center text-6xl opacity-20">👷</div>
+          )}
+          <button
+            onClick={onFechar}
+            className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 flex items-center justify-center transition"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="p-6">
+          {/* Info básica */}
+          <h2 className="text-2xl font-bold text-white mb-1">{profissional.nome}</h2>
+          <p className="text-[#FF5C00] font-semibold mb-4">{profissional.categoria}</p>
+
+          {/* Localização */}
+          <div className="flex items-center gap-2 text-white/70 mb-4">
+            <span>📍 {profissional.cidade}</span>
+          </div>
+
+          {/* Avaliação */}
+          <div className="flex items-center gap-2 mb-4">
+            <div className="flex gap-0.5">
+              {[1, 2, 3, 4, 5].map(i => (
+                <span
+                  key={i}
+                  className={`text-lg ${
+                    i <= Math.round(profissional.avaliacao)
+                      ? 'text-[#FFD600]'
+                      : 'text-white/20'
+                  }`}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+            <span className="text-white font-semibold">{profissional.avaliacao?.toFixed(1)}</span>
+            <span className="text-white/50 text-sm">({profissional.total_avaliacoes} avaliações)</span>
+          </div>
+
+          {/* Bio */}
+          {profissional.bio && (
+            <div className="mb-6 pb-6 border-b border-white/10">
+              <p className="text-white/70 leading-relaxed">{profissional.bio}</p>
             </div>
           )}
-          <button onClick={onFechar} className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 flex items-center justify-center">✕</button>
-        </div>
-        <div className="px-6 py-6">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-white mb-2">{profissional.nome}</h1>
-            <p className="text-[#FF5C00] font-semibold text-lg mb-2">{profissional.categoria}</p>
-            <p className="text-white/50 mb-4">📍 {profissional.cidade}</p>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="flex gap-0.5">
-                {[1,2,3,4,5].map(i => (<span key={i} className={`text-lg ${i <= Math.round(profissional.avaliacao) ? 'text-[#FFD600]' : 'text-white/20'}`}>★</span>))}
-              </div>
-              <span className="text-white font-semibold">{profissional.avaliacao?.toFixed(1)}</span>
-              <span className="text-white/50">({profissional.total_avaliacoes})</span>
-            </div>
+
+          {/* Preço */}
+          <div className="mb-6 pb-6 border-b border-white/10 bg-[#00C896]/10 rounded-xl p-4">
+            <p className="text-white/60 text-sm mb-1">Tabela de Preços</p>
+            <p className="text-2xl font-bold text-[#00C896]">
+              {profissional.preco_min && profissional.preco_max
+                ? `R$ ${profissional.preco_min}–${profissional.preco_max}/h`
+                : profissional.preco_min
+                ? `R$ ${profissional.preco_min}/h`
+                : 'Consulte'}
+            </p>
           </div>
-          {profissional.bio && (<div className="mb-6 pb-6 border-b border-white/10"><h2 className="text-white font-semibold mb-3">Sobre</h2><p className="text-white/70">{profissional.bio}</p></div>)}
-          {(profissional.preco_min || profissional.preco_max) && (<div className="mb-6 pb-6 border-b border-white/10"><h2 className="text-white font-semibold mb-3">Preço</h2><p className="text-[#00C896] text-xl font-bold">{profissional.preco_min && profissional.preco_max ? `R$ ${profissional.preco_min} - R$ ${profissional.preco_max}/h` : profissional.preco_min ? `A partir de R$ ${profissional.preco_min}/h` : 'Consulte'}</p></div>)}
-          {(profissional.telefone || profissional.email) && (<div className="mb-6 pb-6 border-b border-white/10"><h2 className="text-white font-semibold mb-3">Contato</h2>{profissional.telefone && (<p className="text-white/70 mb-2">📱 {profissional.telefone}</p>)}{profissional.email && (<p className="text-white/70">📧 {profissional.email}</p>)}</div>)}
-          {!carregando && avaliacoes.length > 0 && (<div className="mb-6 pb-6 border-b border-white/10"><h2 className="text-white font-semibold mb-4">Avaliações</h2><div className="space-y-3">{avaliacoes.map(av => (<div key={av.id} className="bg-white/5 rounded-xl p-4"><div className="flex items-center gap-2 mb-2"><div className="flex gap-0.5">{[1,2,3,4,5].map(i => (<span key={i} className={`text-sm ${i <= av.nota ? 'text-[#FFD600]' : 'text-white/20'}`}>★</span>))}</div><span className="text-white/50 text-xs">{new Date(av.created_at).toLocaleDateString('pt-BR')}</span></div><p className="text-white/80 text-sm">{av.comentario}</p></div>))}</div></div>)}
-          <div className="flex gap-3">
-            <button onClick={onFechar} className="flex-1 bg-white/10 text-white py-3 rounded-xl font-semibold hover:bg-white/20 transition">Fechar</button>
-            {whatsappUrl && (<a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex-1 bg-[#FF5C00] text-white py-3 rounded-xl font-semibold hover:bg-[#e05200] transition text-center">💬 Contatar</a>)}
+
+          {/* Avaliações Recentes */}
+          {loading ? (
+            <div className="text-center py-6 text-white/40">
+              <p>Carregando avaliações...</p>
+            </div>
+          ) : avaliacoes.length > 0 ? (
+            <div className="mb-6 pb-6 border-b border-white/10">
+              <h3 className="text-white font-semibold mb-4">Avaliações Recentes</h3>
+              <div className="space-y-3">
+                {avaliacoes.map(av => (
+                  <div key={av.id} className="bg-white/5 rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-white font-semibold text-sm">{av.nome_avaliador}</p>
+                      <div className="flex gap-0.5">
+                        {[1, 2, 3, 4, 5].map(i => (
+                          <span
+                            key={i}
+                            className={`text-xs ${i <= av.nota ? 'text-[#FFD600]' : 'text-white/20'}`}
+                          >
+                            ★
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-white/60 text-xs leading-relaxed">{av.comentario}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {/* Botões de ação */}
+          <div className="space-y-3">
+            {whatsappUrl ? (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full bg-[#25D366] text-white py-3 rounded-xl font-semibold hover:bg-[#20BA5C] transition text-center"
+              >
+                💬 Contatar via WhatsApp
+              </a>
+            ) : null}
+
+            <button
+              onClick={onFechar}
+              className="w-full bg-white/10 text-white py-3 rounded-xl font-semibold hover:bg-white/20 transition"
+            >
+              Fechar
+            </button>
           </div>
         </div>
       </div>
