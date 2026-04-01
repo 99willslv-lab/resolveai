@@ -13,19 +13,11 @@ export default function Footer() {
 
         {/* Grid de conteúdo */}
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5 mb-12">
-          {/* Brand com logo */}
+          {/* Brand */}
           <div className="lg:col-span-2">
-            <div className="mb-4 flex items-center gap-2">
-              <img 
-                src="/logo.png" 
-                alt="Chama9" 
-                className="h-10 w-auto object-contain"
-                loading="lazy"
-              />
-              <div>
-                <h3 className="text-white font-black text-lg">Chama9</h3>
-                <p className="text-white/40 text-xs">Castro - PR</p>
-              </div>
+            <div className="mb-4 flex flex-col">
+              <span className="text-2xl font-black bg-gradient-to-r from-[#f97316] via-orange-400 to-[#22c55e] bg-clip-text text-transparent">Chama9</span>
+              <span className="text-xs text-white/40">Castro - PR</span>
             </div>
             <p className="text-white/60 text-sm mb-4">
               Plataforma de intermediação de serviços locais. Conectando você aos melhores profissionais com rapidez, segurança e sem complicação.
