@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { supabase } from './utils/supabase.js'
 import Cards from './components/Cards'
-import MensagemModal from './components/MensagemModal'
-import AvaliarModal from './components/AvaliarModal'
 import PerfilModal from './components/PerfilModal'
 import Admin from './components/Admin'
 import CadastroPage from './components/CadastroPage'
@@ -12,10 +10,7 @@ import Footer from './components/Footer'
 function HomePage() {
   const [filtroCategoria, setFiltroCategoria] = useState('')
   const [profissionalSelecionado, setProf] = useState(null)
-  const [modalAvaliar, setModalAvaliar] = useState(null)
-  const [categoriasMensagem, setCatMensagem] = useState({})
 
-  // Estados sempre zerados ao recarregar - sem persistência
   const CATEGORIAS = [
     { nome: 'Encanador', icon: '🔧' },
     { nome: 'Eletricista', icon: '⚡' },
@@ -111,33 +106,11 @@ function HomePage() {
 
       <Cards
         filtroCategoria={filtroCategoria}
-        onMensagem={prof => {
-          setProf(prof)
-          setCatMensagem(prev => ({ ...prev, [prof.id]: true }))
-        }}
-        onAvaliar={setModalAvaliar}
         onVerPerfil={setProf}
       />
 
-      {profissionalSelecionado && !categoriasMensagem[profissionalSelecionado.id] && (
+      {profissionalSelecionado && (
         <PerfilModal profissional={profissionalSelecionado} onFechar={() => setProf(null)} />
-      )}
-
-      {profissionalSelecionado && categoriasMensagem[profissionalSelecionado.id] && (
-        <MensagemModal
-          profissional={profissionalSelecionado}
-          onFechar={() => {
-            setProf(null)
-            setCatMensagem(prev => ({ ...prev, [profissionalSelecionado.id]: false }))
-          }}
-        />
-      )}
-
-      {modalAvaliar && (
-        <AvaliarModal
-          profissional={modalAvaliar}
-          onFechar={() => setModalAvaliar(null)}
-        />
       )}
 
       <Footer />
