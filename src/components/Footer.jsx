@@ -1,4 +1,8 @@
+import { useLogo } from '../hooks/useLogo'
+
 export default function Footer() {
+  const { logoUrl } = useLogo()
+
   return (
     <footer className="border-t border-white/10 bg-[#0f172a]/50 backdrop-blur-sm mt-20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
@@ -13,11 +17,21 @@ export default function Footer() {
 
         {/* Grid de conteúdo */}
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5 mb-12">
-          {/* Brand */}
+          {/* Brand com logo dinâmico */}
           <div className="lg:col-span-2">
-            <div className="mb-4 flex flex-col">
-              <span className="text-2xl font-black bg-gradient-to-r from-[#f97316] via-orange-400 to-[#22c55e] bg-clip-text text-transparent">Chama9</span>
-              <span className="text-xs text-white/40">Castro - PR</span>
+            <div className="mb-4 flex items-center gap-2">
+              {logoUrl && (
+                <img 
+                  src={logoUrl} 
+                  alt="Chama9" 
+                  className="h-10 w-auto object-contain"
+                  loading="lazy"
+                />
+              )}
+              <div>
+                <h3 className="text-white font-black text-lg">Chama9</h3>
+                <p className="text-white/40 text-xs">Castro - PR</p>
+              </div>
             </div>
             <p className="text-white/60 text-sm mb-4">
               Plataforma de intermediação de serviços locais. Conectando você aos melhores profissionais com rapidez, segurança e sem complicação.
