@@ -1,13 +1,13 @@
 {
-  "name": "Chama9 - Serviços Locais",
+  "name": "Chama9 - Serviços Locais em Castro",
   "short_name": "Chama9",
-  "description": "Serviços locais rápidos e confiáveis em Castro PR",
+  "description": "Encontre profissionais verificados em Castro PR com rapidez e segurança",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "theme_color": "#22c55e",
   "background_color": "#0f172a",
-  "orientation": "portrait",
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -34,35 +34,45 @@
       "purpose": "maskable"
     }
   ],
+  "categories": ["lifestyle", "business"],
   "screenshots": [
     {
-      "src": "/screenshot-1.png",
+      "src": "/screenshot-540x720.png",
       "sizes": "540x720",
-      "type": "image/png"
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshot-1280x720.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
     }
   ],
   "shortcuts": [
     {
       "name": "Buscar Profissional",
       "short_name": "Buscar",
-      "description": "Buscar profissionais de serviços",
+      "description": "Encontre profissionais de serviços em Castro",
       "url": "/?mode=search",
       "icons": [
         {
           "src": "/icons/icon-192.png",
-          "sizes": "192x192"
+          "sizes": "192x192",
+          "type": "image/png"
         }
       ]
     },
     {
       "name": "Cadastrar Serviço",
       "short_name": "Cadastrar",
-      "description": "Cadastre seu serviço no Chama9",
+      "description": "Registre seu serviço no Chama9",
       "url": "/cadastro",
       "icons": [
         {
           "src": "/icons/icon-192.png",
-          "sizes": "192x192"
+          "sizes": "192x192",
+          "type": "image/png"
         }
       ]
     }
